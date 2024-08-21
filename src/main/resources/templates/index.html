@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>bib</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<form action="#" th:action="@{/}" method="post">
+    ID oder Link: <input type="text" th:value="${idOrLink}" name="idOrLink"><br>
+    <input type="submit" value="Senden">
+</form>
+</body>
+
+<div th:remove="tag" th:utext="${html}"></div>
+
+</html>
