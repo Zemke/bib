@@ -6,11 +6,11 @@
 </head>
 <body>
 <form action="#" th:action="@{/}" method="post">
-    ID oder Link: <input type="text" th:value="${idOrLink}" name="idOrLink"><br>
+    <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
     <input type="submit" value="Senden">
 </form>
 </body>
 
-<div th:remove="tag" th:utext="${html}"></div>
+<!--<div th:remove="tag" th:utext="${html}"></div>-->
 
 </html>

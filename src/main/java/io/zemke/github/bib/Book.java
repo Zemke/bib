@@ -1,7 +1,13 @@
 package io.zemke.github.bib;
 
+import jakarta.persistence.Entity;
+import org.springframework.data.annotation.Id;
+
+@Entity
 public class Book {
-    private String id;
+
+    @Id
+    private final String id;
     private String name;
     private String html;
     private Boolean avail;
