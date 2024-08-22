@@ -6,9 +6,7 @@ import io.zemke.github.bib.http.Bibber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -79,6 +77,15 @@ public class MainController {
                 .setAvails(bibber.parseAvailHtml(meta.html()));
         bookRepository.save(book);
         return index(model);
+    }
+
+    @PostMapping("/{id}")
+    public String delete(@RequestParam String method, @PathVariable String id) {
+        if ("delete".equals(method)) {
+            var b = bookRepository.findById(id).orElseThrow();
+            bookRepository.delete(b);
+        }
+        return "redirect:/";
     }
 }
 

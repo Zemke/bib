@@ -89,6 +89,15 @@
         .book .avail table tr th:last-child {
             border-right: 0;
         }
+
+        .actions {
+            display: flex;
+            padding: 0 .6rem;
+        }
+
+        .actions button {
+            padding: .1rem .5rem;
+        }
     </style>
 </head>
 <body>
@@ -111,6 +120,15 @@
             <h3 th:text="${b.author}"></h3>
         </div>
     </div>
+    <div class="actions">
+        <a th:attr="href=|https://open.stadt-muenster.de/Permalink.aspx?id=${b.id}|" target="_blank">
+            <button>Bücherei</button>
+        </a>
+        <form action="#" th:action="@{'/' + ${b.id}}" method="post">
+            <input type="hidden" th:value="delete" name="method">&nbsp;
+            <button type="submit">Löschen</button>
+        </form>
+    </div>
 <!--    <div class="avail" th:each="a : ${#lists.sort(avails[b.id], )}">-->
     <div class="avail" th:each="a : ${avails[b.id]}">
         <h4 th:text="${a.key}"></h4>
@@ -129,7 +147,6 @@
                 <td class="pre" th:text="${av.pre}"></td>
             </tr>
         </table>
-        <!--            <span th:text="${a.value.pos}"></span>-->
     </div>
 </div>
 
