@@ -6,10 +6,18 @@ import io.zemke.github.bib.http.Bibber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +27,8 @@ import java.util.stream.Collectors;
 @Controller
 public class MainController {
 
+    public static final LocalTime OPENING = LocalTime.of(9, 59);
+    public static final LocalTime CLOSING = LocalTime.of(18, 1);
     private BookRepository bookRepository;
     private Bibber bibber;
 
@@ -32,6 +42,18 @@ public class MainController {
     public String index(Model model) {
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findAll();
+        for (Book book : books) {
+            if (ChronoUnit.MINUTES.between(LocalDateTime.now(), book.getUpdated()) < 15) {
+                continue;
+            }
+            if (book.getUpdated().toLocalTime().isAfter(OPENING)
+                    && book.getUpdated().toLocalTime().isBefore(CLOSING)) {
+                refresh(book);
+            } else if (LocalTime.now().isAfter(OPENING) && LocalTime.now().isBefore(CLOSING)
+                    && LocalDate.now().getDayOfWeek() != DayOfWeek.SUNDAY) {
+                refresh(book);
+            }
+        }
         Map<String, Map<String, List<Avail>>> booksToBooksByLoc = books.stream()
                 .collect(Collectors.toMap(Book::getId, b ->
                         b.getAvails().stream()
@@ -67,16 +89,23 @@ public class MainController {
             return index(model);
         }
 
-        var meta = bibber.fetchMeta(id);
-        var detail = bibber.fetchDetail(id);
-        var book = new Book(id)
+        refresh(new Book(id));
+        return index(model);
+    }
+
+    private void refresh(Book book) {
+        var meta = bibber.fetchMeta(book.getId());
+        var detail = bibber.fetchDetail(book.getId());
+        book
                 .setHtml(meta.html())
                 .setAvail(meta.avail())
                 .setName(detail.name())
                 .setAuthor(detail.author())
                 .setAvails(bibber.parseAvailHtml(meta.html()));
+        if (!book.getCreated().isEqual(book.getUpdated())) {
+            book.setUpdated(LocalDateTime.now());
+        }
         bookRepository.save(book);
-        return index(model);
     }
 
     @PostMapping("/{id}")

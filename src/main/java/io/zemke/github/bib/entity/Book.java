@@ -2,6 +2,7 @@ package io.zemke.github.bib.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,13 @@ public class Book implements Comparable<Book> {
     @JoinColumn(name = "book_id")
     private List<Avail> avails;
 
+    private LocalDateTime created;
+
+    private LocalDateTime updated;
+
     public Book() {
+        this.created = LocalDateTime.now();
+        this.updated = this.created;
     }
 
     public Book(String id) {
@@ -79,6 +86,18 @@ public class Book implements Comparable<Book> {
     public Book setAvails(List<Avail> avails) {
         this.avails = avails;
         return this;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 
     @Override
