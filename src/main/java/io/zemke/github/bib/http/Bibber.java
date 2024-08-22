@@ -24,6 +24,7 @@ public interface Bibber {
                     var avail = new Avail();
                     avail.setLoc(tds.get(0).getElementsByTag("span").get(1).text());
                     avail.setPos(tds.get(2).getElementsByTag("span").get(1).text());
+                    avail.setStatus(tds.get(3).getElementsByTag("span").get(1).text());
                     String rent = tds.get(4).getElementsByTag("span").get(1).text();
                     if (rent.isEmpty()) {
                         avail.setRent(null);

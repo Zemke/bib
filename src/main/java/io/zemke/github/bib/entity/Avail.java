@@ -20,6 +20,8 @@ public class Avail implements Comparable<Avail> {
 
     private String pos;
 
+    private String status;
+
     private LocalDate rent;
 
     private int pre;
@@ -27,6 +29,7 @@ public class Avail implements Comparable<Avail> {
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -45,6 +48,14 @@ public class Avail implements Comparable<Avail> {
 
     public void setPos(String pos) {
         this.pos = pos;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public LocalDate getRent() {
@@ -66,9 +77,10 @@ public class Avail implements Comparable<Avail> {
     @Override
     public String toString() {
         return "Avail{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", loc='" + loc + '\'' +
                 ", pos='" + pos + '\'' +
+                ", status='" + status + '\'' +
                 ", rent=" + rent +
                 ", pre=" + pre +
                 '}';

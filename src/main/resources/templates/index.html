@@ -29,7 +29,7 @@
 
         form.add input[type="text"] {
             width: 100%;
-            max-width: 40rem;
+            max-width: 21rem;
         }
 
         .book {
@@ -54,7 +54,7 @@
         }
 
         .book .avail table td.pos {
-            width: 11rem;
+            width: 20rem;
         }
 
         .book .avail table td.rent {
@@ -64,6 +64,7 @@
 
         .book .avail table td.pre {
             text-align: right;
+            padding-left: .5rem;
         }
 
         .book .avail table {
@@ -71,7 +72,7 @@
         }
 
         .book .avail table td, table td {
-            border: 1px solid rgba(0,0,0,.2);
+            border: 1px solid rgba(0,0,0,.1);
             padding: .2rem;
         }
 
@@ -116,11 +117,19 @@
     </div>
 <!--    <div class="avail" th:each="a : ${#lists.sort(avails[b.id], )}">-->
     <div class="avail" th:each="a : ${avails[b.id]}">
-        <h3 th:text="${a.key}"></h3>
+        <h4 th:text="${a.key}"></h4>
         <table>
-            <tr th:each="av : ${a.value}">
+            <tr th:each="av : ${#lists.sort(a.value)}">
                 <td class="pos" th:text="${av.pos}"></td>
-                <td class="rent" th:text="${av.rent != null} ? ${#temporals.format(av.rent,'dd.MM.')} : '🟢'"></td>
+                <td class="rent" th:attr="title=|${av.status}|">
+                    <span th:if="${av.rent != null}" th:text="${#temporals.format(av.rent,'dd.MM.')}"></span>
+                    <th:block th:unless="${av.rent != null}" th:switch="${av.status}">
+                        <span th:case="'Verfügbar'">🟢</span>
+                        <span th:case="'Transport'">🚚</span>
+                        <span th:case="'Reparatur'">🔧</span>
+                        <span th:case="*" th:attr="onclick=|alert('${av.status}')|">🟡</span>
+                    </th:block>
+                </td>
                 <td class="pre" th:text="${av.pre}"></td>
             </tr>
         </table>
