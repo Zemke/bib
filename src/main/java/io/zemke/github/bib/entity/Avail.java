@@ -102,7 +102,8 @@ public class Avail implements Comparable<Avail> {
     @Override
     public int compareTo(Avail o) {
         return Comparator
-                .comparing(Avail::getLoc, (o1, o2) -> {
+                .comparing(Avail::getRent, Comparator.nullsFirst(LocalDate::compareTo))
+                .thenComparing(Avail::getLoc, (o1, o2) -> {
                     if (o1.equals(HAUPTSTELLE)) {
                         return -1;
                     } else if (o2.equals(HAUPTSTELLE)) {
@@ -110,7 +111,6 @@ public class Avail implements Comparable<Avail> {
                     }
                     return Comparator.nullsFirst(String::compareTo).compare(o1, o2);
                 })
-                .thenComparing(Avail::getRent, Comparator.nullsFirst(LocalDate::compareTo))
                 .thenComparing(Avail::getPos, Comparator.nullsFirst(String::compareTo))
                 .compare(this, o);
     }
