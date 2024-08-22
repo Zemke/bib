@@ -22,6 +22,7 @@ public class Book implements Comparable<Book> {
     private String html;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_id")
     private List<Avail> avails;
 
     public Book() {
