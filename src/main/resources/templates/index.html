@@ -92,10 +92,12 @@
 
         .actions {
             display: flex;
+            align-items: center;
             padding: 0 .6rem;
         }
 
-        .actions button {
+        .actions button,
+        .actions span {
             padding: .1rem .5rem;
         }
     </style>
@@ -128,6 +130,7 @@
             <input type="hidden" th:value="delete" name="method">&nbsp;
             <button type="submit">Löschen</button>
         </form>
+        <span th:text="Stand: ${#temporals.format(b.updated,'dd.MM. HH:mm')}"></span>
     </div>
 <!--    <div class="avail" th:each="a : ${#lists.sort(avails[b.id], )}">-->
     <div class="avail" th:each="a : ${avails[b.id]}">

@@ -36,6 +36,7 @@ public class Book implements Comparable<Book> {
     }
 
     public Book(String id) {
+        this();
         this.id = id;
     }
 
