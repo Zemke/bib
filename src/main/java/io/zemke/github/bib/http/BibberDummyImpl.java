@@ -1,15 +1,7 @@
 package io.zemke.github.bib.http;
 
-import io.zemke.github.bib.entity.Avail;
-import org.jsoup.Jsoup;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @Profile("dev")

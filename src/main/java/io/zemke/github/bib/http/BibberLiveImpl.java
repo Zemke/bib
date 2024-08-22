@@ -29,9 +29,9 @@ public class BibberLiveImpl implements Bibber {
                     .build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request,
                     HttpResponse.BodyHandlers.ofString());
-            var j = new JSONObject(response.body()).getJSONObject("d");
-            var avail = j.getBoolean("IsAvail");
-            var html = j.getString("CopyData")
+            var J = new JSONObject(response.body()).getJSONObject("d");
+            var avail = J.getBoolean("IsAvail");
+            var html = J.getString("CopyData")
                     .replaceAll("\\r\\n", "")
                     .replaceAll("\\t", "");
             return new MetaDto(avail, html);
@@ -50,11 +50,7 @@ public class BibberLiveImpl implements Bibber {
                     .build();
             HttpResponse<String> responseDetailHtml = HttpClient.newHttpClient().send(requestDetail,
                     HttpResponse.BodyHandlers.ofString());
-            //Jsoup.parse(responseDetailHtml.body())
-            //        .selectXpath("/html/head/meta[@property=\"og:title\"]")
-            //        .getFirst().attr("content");
             Document parsed = Jsoup.parse(responseDetailHtml.body());
-
             return new DetailDto(
                     parsed.getElementById("bibtip_hst").text(),
                     parsed.getElementById("bibtip_author").text()
