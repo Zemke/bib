@@ -17,9 +17,6 @@ public class Book {
     @Lob
     private String html;
 
-    @Lob
-    private String image;
-
     public Book() {
     }
 
@@ -58,16 +55,6 @@ public class Book {
         return this;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public Book setImage(String image) {
-        this.image = image;
-        return this;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

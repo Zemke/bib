@@ -91,19 +91,8 @@ public class MainController {
                 .getFirst().attr("content");
          */
 
-        var requestPic = HttpRequest.newBuilder()
-                .uri(URI.create("https://open.stadt-muenster.de/Portals/0/Bilder/cover/mediennr/" + id + ".jpg"))
-                .GET()
-                .build();
-        HttpResponse<byte[]> responsePic = HttpClient.newHttpClient()
-                .send(requestPic, HttpResponse.BodyHandlers.ofByteArray());
-
         var name = "Vom Ende der Einsamkeit"; // 0980443
-        var book = new Book(id)
-                .setHtml(html)
-                .setAvail(avail)
-                .setName(name)
-                .setImage(Base64.getEncoder().encodeToString(responsePic.body()));
+        var book = new Book(id).setHtml(html).setAvail(avail).setName(name);
         bookRepository.save(book);
 
         model.addAttribute("idOrLink", "");
