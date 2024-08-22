@@ -1,8 +1,11 @@
-package io.zemke.github.bib;
+package io.zemke.github.bib.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+
+import java.util.Set;
 
 @Entity
 public class Book {
@@ -18,6 +21,9 @@ public class Book {
 
     @Lob
     private String html;
+
+    @OneToMany
+    private Set<Avail> avails;
 
     public Book() {
     }
@@ -63,6 +69,15 @@ public class Book {
 
     public Book setHtml(String html) {
         this.html = html;
+        return this;
+    }
+
+    public Set<Avail> getAvails() {
+        return avails;
+    }
+
+    public Book setAvails(Set<Avail> avails) {
+        this.avails = avails;
         return this;
     }
 
