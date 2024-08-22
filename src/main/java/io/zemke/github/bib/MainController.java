@@ -18,10 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -42,6 +39,7 @@ public class MainController {
     public String index(Model model) {
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findAll();
+        books.sort(Comparator.comparing(Book::getCreated).reversed());
         for (Book book : books) {
             if (ChronoUnit.MINUTES.between(LocalDateTime.now(), book.getUpdated()) < 15) {
                 continue;
