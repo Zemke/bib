@@ -3,21 +3,74 @@
 <head>
     <title>📚 bib</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        form {
+            padding: 1rem;
+            white-space: nowrap;
+        }
+
+        form input,
+        form button {
+            font-size: 1rem;
+            padding: .5rem;
+        }
+
+        .oclc-module-view-small {
+            display: none;
+        }
+
+        .oclc-module-table tr td:nth-child(2),
+        .oclc-module-table tr th:nth-child(2),
+        .oclc-module-table tr:first-child {
+            display: none;
+        }
+
+        .book {
+            margin: 2rem 0;
+        }
+
+        .book .meta {
+            display: flex;
+            align-items: center;
+        }
+
+        .book .meta div {
+            padding: .5rem;
+        }
+
+        .book .meta .status {
+            font-size: 2.5rem;
+        }
+    </style>
 </head>
 <body>
 
 <form action="#" th:action="@{/}" method="post">
     <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
-    <input type="submit" value="Senden">
+    <input type="submit" value="OK">
 </form>
 
 <p th:if="${books.empty}">Keine Bücher unter Beobachtung.</p>
 
-<div th:each="book : ${books}">
-    <span th:if="${book.avail}">🟢</span>
-    <span th:if="${not book.avail}">🟥</span>
-    <span th:text="${book.name}"></span> — <span th:text="${book.author}"></span>
-    <div th:utext="${book.html}"></div>
+<div class="book" th:each="book : ${books}">
+    <div class="meta">
+        <div class="status">
+            <span th:if="${book.avail}">🟢</span>
+            <span th:if="${not book.avail}">🟥</span>
+        </div>
+        <div>
+            <h2 th:text="${book.name}"></h2>
+            <h3 th:text="${book.author}"></h3>
+        </div>
+    </div>
+    <div class="avail" th:utext="${book.html}"></div>
 </div>
 
 </body>
