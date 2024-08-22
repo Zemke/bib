@@ -5,12 +5,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
+
 <form action="#" th:action="@{/}" method="post">
     <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
     <input type="submit" value="Senden">
 </form>
+
+<p th:if="${books.empty}">Keine Bücher unter Beobachtung.</p>
+
+<div th:each="book : ${books}">
+    <span th:if="${book.avail}">🟢</span>
+    <span th:if="${not book.avail}">🟥</span>
+    <span th:text="${book.name}"></span> — <span th:text="${book.author}"></span>
+    <div th:utext="${book.html}"></div>
+</div>
+
 </body>
-
-<!--<div th:remove="tag" th:utext="${html}"></div>-->
-
 </html>

@@ -12,6 +12,8 @@ public class Book {
 
     private String name;
 
+    private String author;
+
     private Boolean avail;
 
     @Lob
@@ -37,6 +39,15 @@ public class Book {
         return this;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public Book setAuthor(String author) {
+        this.author = author;
+        return this;
+    }
+
     public Boolean getAvail() {
         return avail;
     }
@@ -58,9 +69,7 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Book book = (Book) o;
-
         return id.equals(book.id);
     }
 
@@ -74,9 +83,9 @@ public class Book {
         return "Book{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", avail=" + avail +
                 ", html='" + html + '\'' +
-                ", avail='" + avail + '\'' +
                 '}';
     }
-
 }
