@@ -96,15 +96,14 @@ public class MainController {
     private void refresh(Book book) {
         var meta = bibber.fetchMeta(book.getId());
         var detail = bibber.fetchDetail(book.getId());
+        book.getAvails().clear();
+        book.getAvails().addAll(bibber.parseAvailHtml(meta.html()));
         book
                 .setHtml(meta.html())
                 .setAvail(meta.avail())
                 .setName(detail.name())
-                .setAuthor(detail.author())
-                .setAvails(bibber.parseAvailHtml(meta.html()));
-        if (!book.getCreated().isEqual(book.getUpdated())) {
-            book.setUpdated(LocalDateTime.now());
-        }
+                .setAuthor(detail.author());
+        book.setUpdated(LocalDateTime.now());
         bookRepository.save(book);
     }
 

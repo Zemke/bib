@@ -3,6 +3,7 @@ package io.zemke.github.bib.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class Book implements Comparable<Book> {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
-    private List<Avail> avails;
+    private List<Avail> avails = new ArrayList<>();
 
     private LocalDateTime created;
 
