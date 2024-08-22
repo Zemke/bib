@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @Profile("dev")
@@ -44,22 +46,6 @@ public class BibberDummyImpl implements Bibber {
                 	</table>
                 </div>
                 """;
-        // TODO test this and move out of Bibber
-        var T = Jsoup.parse(html).getElementsByTag("table").get(0);
-        T.getElementsByTag("tr").stream().map(tr -> {
-            var tds = tr.getElementsByTag("td");
-            var avail = new Avail();
-            avail.setLoc(tds.get(0).getElementsByTag("span").get(1).text());
-            avail.setPos(tds.get(3).getElementsByTag("span").get(1).text());
-            String rent = tds.get(5).getElementsByTag("span").get(1).text();
-            if (rent.isEmpty()) {
-                avail.setRent(null);
-            } else {
-                avail.setRent(LocalDate.parse(rent, DateTimeFormatter.ofPattern("dd.MM.uuuu", Locale.GERMAN)));
-            }
-            avail.setPre(Integer.parseInt(tds.get(6).getElementsByTag("span").get(1).text()));
-            return avail;
-        });
         return new MetaDto(true, html);
     }
 

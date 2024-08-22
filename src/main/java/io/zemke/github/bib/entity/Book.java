@@ -1,14 +1,13 @@
 package io.zemke.github.bib.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
-import java.util.Set;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
-public class Book {
+public class Book implements Comparable<Book> {
 
     @Id
     private String id;
@@ -22,8 +21,8 @@ public class Book {
     @Lob
     private String html;
 
-    @OneToMany
-    private Set<Avail> avails;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Avail> avails;
 
     public Book() {
     }
@@ -72,25 +71,13 @@ public class Book {
         return this;
     }
 
-    public Set<Avail> getAvails() {
+    public List<Avail> getAvails() {
         return avails;
     }
 
-    public Book setAvails(Set<Avail> avails) {
+    public Book setAvails(List<Avail> avails) {
         this.avails = avails;
         return this;
-    }
-
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Book book = (Book) o;
-        return id.equals(book.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 
     @Override
@@ -102,5 +89,26 @@ public class Book {
                 ", avail=" + avail +
                 ", html='" + html + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(id, book.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public int compareTo(Book o) {
+        return Comparator
+                .comparing(Book::getAuthor, Comparator.nullsFirst(String::compareTo))
+                .thenComparing(Book::getName, Comparator.nullsFirst(String::compareTo))
+                .compare(this, o);
     }
 }

@@ -1,5 +1,7 @@
 package io.zemke.github.bib;
 
+import io.zemke.github.bib.entity.Avail;
+import io.zemke.github.bib.entity.Book;
 import io.zemke.github.bib.http.Bibber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
@@ -28,7 +33,15 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("idOrLink", "");
-        model.addAttribute("books", bookRepository.findAll());
+        List<Book> books = bookRepository.findAll();
+        Map<String, Map<String, List<Avail>>> booksToBooksByLoc = books.stream()
+                .collect(Collectors.toMap(Book::getId, b ->
+                        b.getAvails().stream()
+                                .sorted()
+                                .collect(Collectors.groupingBy(Avail::getLoc, LinkedHashMap::new, Collectors.toList()))
+                ));
+        model.addAttribute("avails", booksToBooksByLoc);
+        model.addAttribute("books", books);
         return "index.html";
     }
 
@@ -37,7 +50,7 @@ public class MainController {
         String id;
         if (idOrLink.contains("http") || idOrLink.contains(".de") || idOrLink.contains("www") || idOrLink.contains("stadt")) {
             // link
-            List<String> qq = null;
+            List<String> qq;
             try {
                 qq = Arrays.asList(new URL(idOrLink).getQuery().split("="));
             } catch (MalformedURLException e) {
@@ -58,7 +71,12 @@ public class MainController {
 
         var meta = bibber.fetchMeta(id);
         var detail = bibber.fetchDetail(id);
-        var book = new Book(id).setHtml(meta.html()).setAvail(meta.avail()).setName(detail.name()).setAuthor(detail.author());
+        var book = new Book(id)
+                .setHtml(meta.html())
+                .setAvail(meta.avail())
+                .setName(detail.name())
+                .setAuthor(detail.author())
+                .setAvails(bibber.parseAvailHtml(meta.html()));
         bookRepository.save(book);
         return index(model);
     }

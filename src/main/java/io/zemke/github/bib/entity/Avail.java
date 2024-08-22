@@ -5,10 +5,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Objects;
 
 @Entity
-public class Avail {
+public class Avail implements Comparable<Avail> {
 
+    public static final String HAUPTSTELLE = "Hauptstelle";
     @Id
     @GeneratedValue
     private Long id;
@@ -76,11 +79,27 @@ public class Avail {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Avail avail = (Avail) o;
-        return id.equals(avail.id);
+        return Objects.equals(id, avail.id);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public int compareTo(Avail o) {
+        return Comparator
+                .comparing(Avail::getLoc, (o1, o2) -> {
+                    if (o1.equals(HAUPTSTELLE)) {
+                        return -1;
+                    } else if (o2.equals(HAUPTSTELLE)) {
+                        return 1;
+                    }
+                    return Comparator.nullsFirst(String::compareTo).compare(o1, o2);
+                })
+                .thenComparing(Avail::getRent, Comparator.nullsFirst(LocalDate::compareTo))
+                .thenComparing(Avail::getPos, Comparator.nullsFirst(String::compareTo))
+                .compare(this, o);
     }
 }
