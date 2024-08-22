@@ -9,8 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -73,7 +78,7 @@ public class MainController {
                 .replaceAll("\\t", "");
 
         /*
-        var requestDetail = HttpRequest.newBuilder() // "https://open.stadt-muenster.de/Portals/0/Bilder/cover/mediennr/" + id + ".jpg"
+        var requestDetail = HttpRequest.newBuilder()
                 .uri(URI.create("https://open.stadt-muenster.de/?id=" + id))
                 .header("Content-Type", "text/html,application/xhtml+xml,application/xml")
                 .POST(HttpRequest.BodyPublishers.ofString(body))
@@ -85,8 +90,20 @@ public class MainController {
                 .selectXpath("/html/head/meta[@property=\"og:title\"]")
                 .getFirst().attr("content");
          */
-        var name = "The Shining";
-        var book = new Book(id).setHtml(html).setAvail(avail).setName(name);
+
+        var requestPic = HttpRequest.newBuilder()
+                .uri(URI.create("https://open.stadt-muenster.de/Portals/0/Bilder/cover/mediennr/" + id + ".jpg"))
+                .GET()
+                .build();
+        HttpResponse<byte[]> responsePic = HttpClient.newHttpClient()
+                .send(requestPic, HttpResponse.BodyHandlers.ofByteArray());
+
+        var name = "Vom Ende der Einsamkeit"; // 0980443
+        var book = new Book(id)
+                .setHtml(html)
+                .setAvail(avail)
+                .setName(name)
+                .setImage(Base64.getEncoder().encodeToString(responsePic.body()));
         bookRepository.save(book);
 
         model.addAttribute("idOrLink", "");

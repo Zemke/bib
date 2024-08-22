@@ -1,16 +1,27 @@
 package io.zemke.github.bib;
 
 import jakarta.persistence.Entity;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 
 @Entity
 public class Book {
 
     @Id
-    private final String id;
+    private String id;
+
     private String name;
-    private String html;
+
     private Boolean avail;
+
+    @Lob
+    private String html;
+
+    @Lob
+    private String image;
+
+    public Book() {
+    }
 
     public Book(String id) {
         this.id = id;
@@ -29,6 +40,15 @@ public class Book {
         return this;
     }
 
+    public Boolean getAvail() {
+        return avail;
+    }
+
+    public Book setAvail(Boolean avail) {
+        this.avail = avail;
+        return this;
+    }
+
     public String getHtml() {
         return html;
     }
@@ -38,12 +58,12 @@ public class Book {
         return this;
     }
 
-    public Boolean getAvail() {
-        return avail;
+    public String getImage() {
+        return image;
     }
 
-    public Book setAvail(Boolean avail) {
-        this.avail = avail;
+    public Book setImage(String image) {
+        this.image = image;
         return this;
     }
 
