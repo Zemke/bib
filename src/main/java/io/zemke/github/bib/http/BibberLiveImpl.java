@@ -3,6 +3,7 @@ package io.zemke.github.bib.http;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -15,14 +16,15 @@ import java.net.http.HttpResponse;
 @Profile("prod")
 public class BibberLiveImpl implements Bibber {
 
-    public static final String CHECK = "https://open.stadt-muenster.de/DesktopModules/OCLC.OPEN.PL.DNN.SearchModule/SearchService.asmx/GetAvailability";
+    @Value("${biblink}")
+    private String biblink;
 
     @Override
     public MetaDto fetchMeta(String id) {
         try {
             var body = "{'portalId':0,'mednr':'" + id + "','culture':'de-DE','branchFilter':'','requestCopyData':true}";
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(CHECK))
+                    .uri(URI.create(biblink + "/DesktopModules/OCLC.OPEN.PL.DNN.SearchModule/SearchService.asmx/GetAvailability"))
                     .header("Content-Type", "application/json;charset=utf-8")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
@@ -44,7 +46,7 @@ public class BibberLiveImpl implements Bibber {
     public DetailDto fetchDetail(String id) {
         try {
             var requestDetail = HttpRequest.newBuilder()
-                    .uri(URI.create("https://open.stadt-muenster.de/?id=" + id))
+                    .uri(URI.create(biblink + "/?id=" + id))
                     .header("Content-Type", "text/html,application/xhtml+xml,application/xml")
                     .GET()
                     .build();

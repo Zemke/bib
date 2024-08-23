@@ -123,7 +123,7 @@
         </div>
     </div>
     <div class="actions">
-        <a th:attr="href=|https://open.stadt-muenster.de/Permalink.aspx?id=${b.id}|" target="_blank">
+        <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
             <button>Bücherei</button>
         </a>
         <form action="#" th:action="@{'/' + ${b.id}}" method="post">

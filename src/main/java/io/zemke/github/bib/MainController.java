@@ -6,6 +6,7 @@ import io.zemke.github.bib.http.Bibber;
 import io.zemke.github.bib.service.BookRepository;
 import io.zemke.github.bib.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +23,19 @@ import java.util.stream.Collectors;
 @Controller
 public class MainController {
 
+    private String biblink;
+
     private BookRepository bookRepository;
     private Bibber bibber;
 
     private BookService bookService;
 
     @Autowired
-    public MainController(BookRepository bookRepository,
+    public MainController(@Value("${biblink}") String biblink,
+                          BookRepository bookRepository,
                           Bibber bibber,
                           BookService bookService) {
+        this.biblink = biblink;
         this.bookRepository = bookRepository;
         this.bibber = bibber;
         this.bookService = bookService;
@@ -54,6 +59,7 @@ public class MainController {
                 ));
         model.addAttribute("avails", booksToBooksByLoc);
         model.addAttribute("books", books);
+        model.addAttribute("biblink", biblink);
         return "index.html";
     }
 
