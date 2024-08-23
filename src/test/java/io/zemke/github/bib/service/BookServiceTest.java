@@ -52,6 +52,20 @@ class BookServiceTest {
         assertThat(cut.shouldRefresh(book)).isTrue();
     }
 
+    @Test
+    void shouldRefresh_24h() {
+        var clock = getClock(14, 8, 0);
+        var cut = new BookService(clock);
+        for (var h = 24; h >= 14; h--) {
+            var book = book(LocalDateTime.now(clock).minusHours(h));
+            assertThat(cut.shouldRefresh(book)).isTrue();
+        }
+        for (var h = 13; h >= 1; h--) {
+            var book = book(LocalDateTime.now(clock).minusHours(h));
+            assertThat(cut.shouldRefresh(book)).isFalse();
+        }
+    }
+
     private Clock getClock(int dayOfMonth, int hour, int minute) {
         var now = ZonedDateTime.of(2024, 8, dayOfMonth, hour, minute, 0, 0, ZoneId.of("Europe/Berlin"));
         return Clock.fixed(now.toInstant(), now.getZone());
