@@ -3,6 +3,8 @@ package io.zemke.github.bib;
 import io.zemke.github.bib.entity.Avail;
 import io.zemke.github.bib.entity.Book;
 import io.zemke.github.bib.http.Bibber;
+import io.zemke.github.bib.service.BookRepository;
+import io.zemke.github.bib.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,26 +15,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
 
-    public static final LocalTime OPENING = LocalTime.of(9, 59);
-    public static final LocalTime CLOSING = LocalTime.of(18, 1);
     private BookRepository bookRepository;
     private Bibber bibber;
 
+    private BookService bookService;
+
     @Autowired
-    public MainController(BookRepository bookRepository, Bibber bibber) {
+    public MainController(BookRepository bookRepository,
+                          Bibber bibber,
+                          BookService bookService) {
         this.bookRepository = bookRepository;
         this.bibber = bibber;
+        this.bookService = bookService;
     }
 
     @GetMapping("/")
@@ -41,14 +42,7 @@ public class MainController {
         List<Book> books = bookRepository.findAll();
         books.sort(Comparator.comparing(Book::getCreated).reversed());
         for (Book book : books) {
-            if (ChronoUnit.MINUTES.between(LocalDateTime.now(), book.getUpdated()) < 15) {
-                continue;
-            }
-            if (book.getUpdated().toLocalTime().isAfter(OPENING)
-                    && book.getUpdated().toLocalTime().isBefore(CLOSING)) {
-                refresh(book);
-            } else if (LocalTime.now().isAfter(OPENING) && LocalTime.now().isBefore(CLOSING)
-                    && LocalDate.now().getDayOfWeek() != DayOfWeek.SUNDAY) {
+            if (bookService.shouldRefresh(book)) {
                 refresh(book);
             }
         }

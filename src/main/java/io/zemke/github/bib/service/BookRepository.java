@@ -1,4 +1,4 @@
-package io.zemke.github.bib;
+package io.zemke.github.bib.service;
 
 import io.zemke.github.bib.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
