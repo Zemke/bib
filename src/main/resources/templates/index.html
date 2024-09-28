@@ -15,6 +15,11 @@
             font-size:90%;
         }
 
+        .container {
+            max-width: 27rem;
+            margin: 0 auto;
+        }
+
         button:hover,
         input[type=button]:hover,
         input[type=submit]:hover {
@@ -35,7 +40,6 @@
 
         form.add input[type="text"] {
             width: 100%;
-            max-width: 21rem;
         }
 
         .book {
@@ -107,6 +111,17 @@
             padding: .1rem .5rem;
         }
 
+        .opening-hours {
+            text-align: right;
+            padding: 1rem 0;
+        }
+
+        .opening-hours a {
+            color: cyan;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
         @media (prefers-color-scheme: dark) {
             html, body {
                 background: #181818;
@@ -130,6 +145,7 @@
     </style>
 </head>
 <body>
+<div class="container">
 
 <form class="add" action="#" th:action="@{/}" method="post">
     <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
@@ -180,5 +196,10 @@
     </div>
 </div>
 
+<div class="opening-hours">
+    <a target="_blank" href="https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten">Öffnungszeiten</a>
+</div>
+
+</div>
 </body>
 </html>
