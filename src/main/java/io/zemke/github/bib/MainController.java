@@ -41,7 +41,16 @@ public class MainController {
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findAll();
         books.sort(Comparator.comparing(Book::getCreated).reversed());
-        books.parallelStream().filter(bookService::shouldRefresh).forEach(bookService::refresh);
+        books.parallelStream()
+                .filter(bookService::shouldRefresh)
+                .forEach(book -> {
+                    try {
+                        Thread.sleep((long) (1000 * (new Random().nextDouble() + .5)));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException("interrupted during request spreading", e);
+                    }
+                    bookService.refresh(book);
+                });
         bookRepository.saveAll(books);
         Map<String, Map<String, List<Avail>>> booksToBooksByLoc = books.stream()
                 .collect(Collectors.toMap(Book::getId, b ->
