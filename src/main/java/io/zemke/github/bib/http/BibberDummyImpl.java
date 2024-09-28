@@ -3,12 +3,22 @@ package io.zemke.github.bib.http;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 @Component
 @Profile("dev")
 public class BibberDummyImpl implements Bibber {
 
+    private static void wait(String whatFor) {
+        try (var ex = Executors.newSingleThreadScheduledExecutor()) {
+            ex.schedule(() -> System.out.println("wait for " + whatFor), 500, TimeUnit.MILLISECONDS);
+        }
+    }
+
     @Override
     public MetaDto fetchMeta(String id) {
+        wait("meta");
         String html = """
                 <div>
                 	<table class=\\"oclc-module-table\\" tabindex=\\"0\\" id=\\"1033156_grdViewMediumCopies\\">
@@ -43,6 +53,7 @@ public class BibberDummyImpl implements Bibber {
 
     @Override
     public DetailDto fetchDetail(String id) {
+        wait("detail");
         return new DetailDto("Vom Ende der Einsamkeit", "Wells, Benedict"); // 0980443
     }
 }

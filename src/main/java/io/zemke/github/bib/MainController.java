@@ -2,7 +2,6 @@ package io.zemke.github.bib;
 
 import io.zemke.github.bib.entity.Avail;
 import io.zemke.github.bib.entity.Book;
-import io.zemke.github.bib.http.Bibber;
 import io.zemke.github.bib.service.BookRepository;
 import io.zemke.github.bib.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,18 +24,15 @@ public class MainController {
     private String biblink;
 
     private BookRepository bookRepository;
-    private Bibber bibber;
 
     private BookService bookService;
 
     @Autowired
     public MainController(@Value("${biblink}") String biblink,
                           BookRepository bookRepository,
-                          Bibber bibber,
                           BookService bookService) {
         this.biblink = biblink;
         this.bookRepository = bookRepository;
-        this.bibber = bibber;
         this.bookService = bookService;
     }
 
@@ -46,11 +41,8 @@ public class MainController {
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findAll();
         books.sort(Comparator.comparing(Book::getCreated).reversed());
-        for (Book book : books) {
-            if (bookService.shouldRefresh(book)) {
-                refresh(book);
-            }
-        }
+        books.parallelStream().filter(bookService::shouldRefresh).forEach(bookService::refresh);
+        bookRepository.saveAll(books);
         Map<String, Map<String, List<Avail>>> booksToBooksByLoc = books.stream()
                 .collect(Collectors.toMap(Book::getId, b ->
                         b.getAvails().stream()
@@ -87,22 +79,11 @@ public class MainController {
             return index(model);
         }
 
-        refresh(new Book(id));
-        return index(model);
-    }
-
-    private void refresh(Book book) {
-        var meta = bibber.fetchMeta(book.getId());
-        var detail = bibber.fetchDetail(book.getId());
-        book.getAvails().clear();
-        book.getAvails().addAll(bibber.parseAvailHtml(meta.html()));
-        book
-                .setHtml(meta.html())
-                .setAvail(meta.avail())
-                .setName(detail.name())
-                .setAuthor(detail.author());
-        book.setUpdated(LocalDateTime.now());
+        var book = new Book(id);
+        bookService.refresh(book);
         bookRepository.save(book);
+
+        return index(model);
     }
 
     @PostMapping("/{id}")
