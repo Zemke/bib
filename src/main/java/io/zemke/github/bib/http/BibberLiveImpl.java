@@ -29,15 +29,17 @@ public class BibberLiveImpl implements Bibber {
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request,
-                    HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response;
+            try (var httpClient = HttpClient.newHttpClient()) {
+                response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            }
             var J = new JSONObject(response.body()).getJSONObject("d");
             var avail = J.getBoolean("IsAvail");
             var html = J.getString("CopyData")
                     .replaceAll("\\r\\n", "")
                     .replaceAll("\\t", "");
             return new MetaDto(avail, html);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new BibberException(e);
         }
     }
@@ -57,7 +59,7 @@ public class BibberLiveImpl implements Bibber {
                     parsed.getElementById("bibtip_hst").text(),
                     parsed.getElementById("bibtip_author").text()
             );
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new BibberException(e);
         }
     }
