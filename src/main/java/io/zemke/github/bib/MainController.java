@@ -4,6 +4,8 @@ import io.zemke.github.bib.entity.Avail;
 import io.zemke.github.bib.entity.Book;
 import io.zemke.github.bib.service.BookRepository;
 import io.zemke.github.bib.service.BookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,8 @@ public class MainController {
 
     private BookService bookService;
 
+    private final Logger logger = LoggerFactory.getLogger(MainController.class);
+
     @Autowired
     public MainController(@Value("${biblink}") String biblink,
                           BookRepository bookRepository,
@@ -49,7 +53,11 @@ public class MainController {
                     } catch (InterruptedException e) {
                         throw new RuntimeException("interrupted during request spreading", e);
                     }
-                    bookService.refresh(book);
+                    try {
+                        bookService.refresh(book);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
                 });
         bookRepository.saveAll(books);
         Map<String, Map<String, List<Avail>>> booksToBooksByLoc = books.stream()
