@@ -104,6 +104,15 @@
             border-right: 0;
         }
 
+        .avails {
+            height: 0;
+            overflow: hidden;
+        }
+
+        .avails.show {
+            height: auto;
+        }
+
         .actions {
             display: flex;
             align-items: end;
@@ -113,6 +122,10 @@
         .actions button,
         .actions span {
             padding: .1rem .5rem;
+        }
+
+        button.standort {
+            margin-right: 1rem;
         }
 
         .opening-hours {
@@ -170,6 +183,7 @@
         </div>
     </div>
     <div class="actions">
+        <button class="standort" th:id="@{'standort_' + ${b.id}}">Standorte</button>
         <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
             <button>Bücherei</button>
         </a>
@@ -179,23 +193,25 @@
         </form>
         <span th:text="'Stand: ' + ${#temporals.format(b.updated, 'dd.MM. HH:mm')}"></span>
     </div>
-    <div class="avail" th:each="a : ${avails[b.id]}">
-        <h4 th:text="${a.key}"></h4>
-        <table>
-            <tr th:each="av : ${#lists.sort(a.value)}">
-                <td class="pos" th:text="${av.pos}"></td>
-                <td class="rent" th:attr="title=|${av.status}|">
-                    <span th:if="${av.rent != null}" th:text="${#temporals.format(av.rent,'dd.MM.')}"></span>
-                    <th:block th:unless="${av.rent != null}" th:switch="${av.status}">
-                        <span th:case="'Verfügbar'">🟢</span>
-                        <span th:case="'Transport'">🚚</span>
-                        <span th:case="'Reparatur'">🔧</span>
-                        <span th:case="*" th:attr="onclick=|alert('${av.status}')|">🟡</span>
-                    </th:block>
-                </td>
-                <td class="pre" th:text="${av.pre}"></td>
-            </tr>
-        </table>
+    <div class="avails" th:id="@{'avails_' + ${b.id}}">
+        <div class="avail" th:each="a : ${avails[b.id]}">
+            <h4 th:text="${a.key}"></h4>
+            <table>
+                <tr th:each="av : ${#lists.sort(a.value)}">
+                    <td class="pos" th:text="${av.pos}"></td>
+                    <td class="rent" th:attr="title=|${av.status}|">
+                        <span th:if="${av.rent != null}" th:text="${#temporals.format(av.rent,'dd.MM.')}"></span>
+                        <th:block th:unless="${av.rent != null}" th:switch="${av.status}">
+                            <span th:case="'Verfügbar'">🟢</span>
+                            <span th:case="'Transport'">🚚</span>
+                            <span th:case="'Reparatur'">🔧</span>
+                            <span th:case="*" th:attr="onclick=|alert('${av.status}')|">🟡</span>
+                        </th:block>
+                    </td>
+                    <td class="pre" th:text="${av.pre}"></td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -204,5 +220,14 @@
 </div>
 
 </div>
+
+<script>
+    document.querySelectorAll("button.standort").forEach(el => {
+        el.addEventListener("click", e => {
+            console.log(e.target.id);
+            document.getElementById("avails_" + e.target.id.split("_")[1]).classList.toggle("show");
+        });
+    });
+</script>
 </body>
 </html>
