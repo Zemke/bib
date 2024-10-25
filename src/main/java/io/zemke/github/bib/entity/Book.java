@@ -23,6 +23,9 @@ public class Book implements Comparable<Book> {
     @Lob
     private String html;
 
+    @Enumerated(EnumType.STRING)
+    private Bookworm bookworm;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
     private List<Avail> avails = new ArrayList<>();
