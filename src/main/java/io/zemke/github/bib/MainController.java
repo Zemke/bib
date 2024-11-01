@@ -43,7 +43,7 @@ public class MainController {
 
     @GetMapping({"/", "/{bookworm}"})
     public String index(Model model, @PathVariable(name = "bookworm", required = false) Optional<String> bw) {
-        var bookworm = bw.map(String::toUpperCase).map(Bookworm::valueOf).orElse(Bookworm.LEA);
+        Bookworm bookworm = getBookworm(bw);
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findByBookworm(bookworm);
         books.sort(Comparator.comparing(Book::getCreated).reversed());
@@ -81,7 +81,7 @@ public class MainController {
                         @RequestParam(defaultValue = "create") String method,
                         @PathVariable("bookworm") String bw,
                         Model model) {
-        var bookworm = Bookworm.valueOf(bw.toUpperCase());
+        Bookworm bookworm = getBookworm(Optional.of(bw));
 
         String id;
         if (idOrLink.contains("http") || idOrLink.contains(".de") || idOrLink.contains("www") || idOrLink.contains("stadt")) {
@@ -115,5 +115,15 @@ public class MainController {
         }
 
         return index(model, Optional.of(bookworm.name()));
+    }
+
+    private static Bookworm getBookworm(Optional<String> bw) {
+        Bookworm bookworm;
+        try {
+            bookworm = bw.map(String::toUpperCase).map(Bookworm::valueOf).orElse(Bookworm.LEA);
+        } catch (Exception ignore) {
+            bookworm = Bookworm.LEA;
+        }
+        return bookworm;
     }
 }
