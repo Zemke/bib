@@ -41,7 +41,7 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String index(Model model, @RequestParam(name = "bookworm", required = false) Optional<String> bw) {
+    public String index(Model model, @RequestParam(name = "buchwurm", required = false) Optional<String> bw) {
         Bookworm bookworm = getBookworm(bw);
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findByBookworm(bookworm);
@@ -78,7 +78,7 @@ public class MainController {
     @PostMapping("/")
     public String index(@RequestParam String idOrLink,
                         @RequestParam(defaultValue = "create") String method,
-                        @RequestParam("bookworm") String bw,
+                        @RequestParam("buchwurm") String bw,
                         Model model) {
         Bookworm bookworm = getBookworm(Optional.of(bw));
 

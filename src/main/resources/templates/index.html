@@ -174,7 +174,7 @@
 <body>
 <div class="container">
 
-<form class="add" action="#" th:action="@{/(bookworm=${#strings.toLowerCase(bookworm)})}" method="post">
+<form class="add" action="#" th:action="@{/(buchwurm=${#strings.toLowerCase(bookworm)})}" method="post">
     <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
     <input type="submit" value="OK">
 </form>
@@ -198,7 +198,7 @@
             <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
                 <button>Bücherei</button>
             </a>
-            <form action="#" th:action="@{/(bookworm=${#strings.toLowerCase(bookworm)})}" method="post">
+            <form action="#" th:action="@{/(buchwurm=${#strings.toLowerCase(bookworm)})}" method="post">
                 <input type="hidden" th:value="delete" name="method">
                 <input type="hidden" th:value="${b.id}" name="idOrLink">
                 <button type="submit">Löschen</button>
@@ -229,8 +229,8 @@
 </div>
 
 <div class="opening-hours">
-    <a href="?bookworm=lea" th:if="${bookworm == 'FLORI'}">Lea</a>
-    <a href="?bookworm=flori" th:if="${bookworm != 'FLORI'}">Flori</a>
+    <a href="?buchwurm=lea" th:if="${bookworm == 'FLORI'}">Lea</a>
+    <a href="?buchwurm=flori" th:if="${bookworm != 'FLORI'}">Flori</a>
     &bull;
     <a target="_blank" href="https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten">Öffnungszeiten</a>
 </div>
