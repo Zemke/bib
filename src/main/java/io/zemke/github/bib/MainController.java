@@ -68,7 +68,7 @@ public class MainController {
                                 .collect(Collectors.groupingBy(Avail::getLoc, LinkedHashMap::new, Collectors.toList()))
                 ));
         model.addAttribute("avails", booksToBooksByLoc);
-        model.addAttribute("collapse", booksToBooksByLoc.size() > 2);
+        model.addAttribute("collapse", booksToBooksByLoc.size() > 4 && bookworm != Bookworm.FLORI);
         model.addAttribute("books", books);
         model.addAttribute("biblink", biblink);
         model.addAttribute("bookworm", bookworm.name());
