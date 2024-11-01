@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -41,8 +40,8 @@ public class MainController {
         this.bookService = bookService;
     }
 
-    @GetMapping({"/", "/{bookworm}"})
-    public String index(Model model, @PathVariable(name = "bookworm", required = false) Optional<String> bw) {
+    @GetMapping("/")
+    public String index(Model model, @RequestParam(name = "bookworm", required = false) Optional<String> bw) {
         Bookworm bookworm = getBookworm(bw);
         model.addAttribute("idOrLink", "");
         List<Book> books = bookRepository.findByBookworm(bookworm);
@@ -76,10 +75,10 @@ public class MainController {
         return "index.html";
     }
 
-    @PostMapping("/{bookworm}")
+    @PostMapping("/")
     public String index(@RequestParam String idOrLink,
                         @RequestParam(defaultValue = "create") String method,
-                        @PathVariable("bookworm") String bw,
+                        @RequestParam("bookworm") String bw,
                         Model model) {
         Bookworm bookworm = getBookworm(Optional.of(bw));
 
