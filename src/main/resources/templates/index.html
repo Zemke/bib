@@ -168,7 +168,7 @@
 <body>
 <div class="container">
 
-<form class="add" action="#" th:action="@{/}" method="post">
+<form class="add" action="#" th:action="@{'/' + ${#strings.toLowerCase(bookworm)}}" method="post">
     <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
     <input type="submit" value="OK">
 </form>
@@ -191,8 +191,9 @@
         <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
             <button>Bücherei</button>
         </a>
-        <form action="#" th:action="@{'/' + ${b.id}}" method="post">
+        <form action="#" th:action="@{'/' + ${#strings.toLowerCase(bookworm)}}" method="post">
             <input type="hidden" th:value="delete" name="method">&nbsp;
+            <input type="hidden" th:value="${b.id}" name="idOrLink">&nbsp;
             <button type="submit">Löschen</button>
         </form>
         <span th:text="'Stand: ' + ${#temporals.format(b.updated, 'dd.MM. HH:mm')}"></span>
@@ -220,6 +221,9 @@
 </div>
 
 <div class="opening-hours">
+    <a href="/lea" th:if="${bookworm == 'FLORI'}">Lea</a>
+    <a href="/flori" th:if="${bookworm != 'FLORI'}">Flori</a>
+    &bull;
     <a target="_blank" href="https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten">Öffnungszeiten</a>
 </div>
 

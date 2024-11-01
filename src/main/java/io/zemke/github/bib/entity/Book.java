@@ -24,6 +24,7 @@ public class Book implements Comparable<Book> {
     private String html;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Bookworm bookworm;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -39,9 +40,10 @@ public class Book implements Comparable<Book> {
         this.updated = this.created;
     }
 
-    public Book(String id) {
+    public Book(String id, Bookworm bookworm) {
         this();
         this.id = id;
+        this.bookworm = bookworm;
     }
 
     public String getId() {
@@ -64,6 +66,14 @@ public class Book implements Comparable<Book> {
     public Book setAuthor(String author) {
         this.author = author;
         return this;
+    }
+
+    public Bookworm getBookworm() {
+        return bookworm;
+    }
+
+    public void setBookworm(Bookworm bookworm) {
+        this.bookworm = bookworm;
     }
 
     public Boolean getAvail() {

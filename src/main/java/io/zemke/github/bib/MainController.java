@@ -2,6 +2,7 @@ package io.zemke.github.bib;
 
 import io.zemke.github.bib.entity.Avail;
 import io.zemke.github.bib.entity.Book;
+import io.zemke.github.bib.entity.Bookworm;
 import io.zemke.github.bib.service.BookRepository;
 import io.zemke.github.bib.service.BookService;
 import org.slf4j.Logger;
@@ -40,10 +41,11 @@ public class MainController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/")
-    public String index(Model model) {
+    @GetMapping({"/", "/{bookworm}"})
+    public String index(Model model, @PathVariable(name = "bookworm", required = false) Optional<String> bw) {
+        var bookworm = bw.map(String::toUpperCase).map(Bookworm::valueOf).orElse(Bookworm.LEA);
         model.addAttribute("idOrLink", "");
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = bookRepository.findByBookworm(bookworm);
         books.sort(Comparator.comparing(Book::getCreated).reversed());
         books.parallelStream()
                 .filter(bookService::shouldRefresh)
@@ -67,13 +69,20 @@ public class MainController {
                                 .collect(Collectors.groupingBy(Avail::getLoc, LinkedHashMap::new, Collectors.toList()))
                 ));
         model.addAttribute("avails", booksToBooksByLoc);
+        model.addAttribute("collapse", booksToBooksByLoc.size() > 2);
         model.addAttribute("books", books);
         model.addAttribute("biblink", biblink);
+        model.addAttribute("bookworm", bookworm.name());
         return "index.html";
     }
 
-    @PostMapping("/")
-    public String index(@RequestParam String idOrLink, Model model) {
+    @PostMapping("/{bookworm}")
+    public String index(@RequestParam String idOrLink,
+                        @RequestParam(defaultValue = "create") String method,
+                        @PathVariable("bookworm") String bw,
+                        Model model) {
+        var bookworm = Bookworm.valueOf(bw.toUpperCase());
+
         String id;
         if (idOrLink.contains("http") || idOrLink.contains(".de") || idOrLink.contains("www") || idOrLink.contains("stadt")) {
             // link
@@ -85,31 +94,26 @@ public class MainController {
             }
             int idxId = qq.indexOf("id");
             if (qq.size() < 2 || idxId < 0) {
-                return index(model);
+                return index(model, Optional.of(bookworm.name()));
             }
             id = qq.get(idxId + 1);
         } else {
             id = idOrLink;
         }
 
-        if (bookRepository.findById(id).isPresent()) {
-            return index(model);
-        }
-
-        var book = new Book(id);
-        bookService.refresh(book);
-        bookRepository.save(book);
-
-        return index(model);
-    }
-
-    @PostMapping("/{id}")
-    public String delete(@RequestParam String method, @PathVariable String id) {
         if ("delete".equals(method)) {
             var b = bookRepository.findById(id).orElseThrow();
             bookRepository.delete(b);
+            return "redirect:/";
+        } else if ("create".equals(method)) {
+            if (bookRepository.findById(id).isPresent()) {
+                return index(model, Optional.of(bookworm.name()));
+            }
+            var book = new Book(id, bookworm);
+            bookService.refresh(book);
+            bookRepository.save(book);
         }
-        return "redirect:/";
+
+        return index(model, Optional.of(bookworm.name()));
     }
 }
-
