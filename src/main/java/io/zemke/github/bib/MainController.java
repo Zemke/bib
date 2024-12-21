@@ -103,7 +103,6 @@ public class MainController {
         if ("delete".equals(method)) {
             var b = bookRepository.findById(id).orElseThrow();
             bookRepository.delete(b);
-            return "redirect:/";
         } else if ("create".equals(method)) {
             if (bookRepository.findById(id).isPresent()) {
                 return index(model, Optional.of(bookworm.name()));
