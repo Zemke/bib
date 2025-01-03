@@ -1,0 +1,8 @@
+{
+  "name": "bib",
+  "version": "0.1.0",
+  "main": "index.js",
+  "dependencies": {
+    "ejs": "^3.1.10"
+  }
+}

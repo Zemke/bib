@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>📚 bib</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        html, body {
+            font-size:90%;
+        }
+
+        .container {
+            max-width: 27rem;
+            margin: 0 auto;
+        }
+
+        .container > p {
+            padding-left: .5rem;
+        }
+
+        button:hover,
+        input[type=button]:hover,
+        input[type=submit]:hover {
+            cursor: pointer;
+        }
+
+        form.add {
+            padding: 1rem .5rem;
+            white-space: nowrap;
+            display: flex;
+        }
+
+        form.add input,
+        form.add button {
+            font-size: 1rem;
+            padding: .5rem;
+        }
+
+        form.add input[type="text"] {
+            width: 100%;
+        }
+
+        .book {
+            margin: 2rem 0;
+        }
+
+        .book .meta {
+            display: flex;
+            align-items: center;
+        }
+
+        .book .meta div {
+            padding: .5rem;
+        }
+
+        .book .meta .status {
+        font-size: 2.5rem;
+        }
+
+        .book .avail {
+            margin: 1rem .5rem;
+        }
+
+        .book .avail table td.pos {
+            width: 21rem;
+        }
+
+        .book .avail table td.rent {
+            width: 3rem;
+            text-align: center;
+        }
+
+        .book .avail table td.pre {
+            text-align: right;
+            padding-left: .5rem;
+        }
+
+        .book .avail table {
+            border-collapse: collapse;
+        }
+
+        .book .avail table td, table td {
+            border: 1px solid rgba(0,0,0,.1);
+            padding: .2rem;
+        }
+
+        .book .avail table tr:first-child td {
+            border-top: 0;
+        }
+
+        .book .avail table tr td:first-child,
+        .book .avail table tr th:first-child {
+            border-left: 0;
+        }
+
+        .book .avail table tr td:last-child,
+        .book .avail table tr th:last-child {
+            border-right: 0;
+        }
+
+        .avails {
+            height: 0;
+            overflow: hidden;
+        }
+
+        .avails.show {
+            height: auto;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 .6rem;
+        }
+
+        .actions > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .actions > div > * {
+            margin-left: .5rem;
+        }
+
+        .actions button {
+            padding: .1rem .5rem;
+        }
+
+        .actions button.standort.active {
+            border-style: inset;
+        }
+
+        .opening-hours {
+            text-align: right;
+            padding: 1rem 0;
+        }
+
+        .opening-hours a {
+            color: cyan;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html, body {
+                background: #181818;
+                color: #afafaf;
+            }
+
+            .book .avail table td, table td {
+                border: 1px solid rgba(255,255,255,.1);
+                padding: .2rem;
+            }
+
+            button, input {
+                background-color: #181818;
+                color: #afafaf;
+            }
+
+            .status {
+                opacity: .7;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<form class="add" action="#" th:action="@{/(buchwurm=${#strings.toLowerCase(bookworm)})}" method="post">
+    <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
+    <input type="submit" value="OK">
+</form>
+
+<p th:if="${books.empty}">Keine Bücher unter Beobachtung.</p>
+
+<div class="book" th:each="b : ${books}">
+    <div class="meta">
+        <div class="status">
+            <span th:if="${b.avail}">🟢</span>
+            <span th:if="${not b.avail}">🟥</span>
+        </div>
+        <div>
+            <h2 th:text="${b.name}"></h2>
+            <h3 th:text="${b.author}"></h3>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="standort" th:classappend="${collapse ? '' : 'active'}" th:id="@{'standort_' + ${b.id}}">Standorte</button>
+        <div>
+            <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
+                <button>Bücherei</button>
+            </a>
+            <form action="#" th:action="@{/(buchwurm=${#strings.toLowerCase(bookworm)})}" method="post">
+                <input type="hidden" th:value="delete" name="method">
+                <input type="hidden" th:value="${b.id}" name="idOrLink">
+                <button type="submit">Löschen</button>
+            </form>
+            <span th:text="'Stand: ' + ${#temporals.format(b.updated, 'dd.MM. HH:mm')}"></span>
+        </div>
+    </div>
+    <div class="avails" th:id="@{'avails_' + ${b.id}}" th:classappend="${collapse ? '' : 'show'}">
+        <div class="avail" th:each="a : ${avails[b.id]}">
+            <h4 th:text="${a.key}"></h4>
+            <table>
+                <tr th:each="av : ${#lists.sort(a.value)}">
+                    <td class="pos" th:text="${av.pos}"></td>
+                    <td class="rent" th:attr="title=|${av.status}|">
+                        <span th:if="${av.rent != null}" th:text="${#temporals.format(av.rent,'dd.MM.')}"></span>
+                        <th:block th:unless="${av.rent != null}" th:switch="${av.status}">
+                            <span th:case="'Verfügbar'">🟢</span>
+                            <span th:case="'Transport'">🚚</span>
+                            <span th:case="'Reparatur'">🔧</span>
+                            <span th:case="*" th:attr="onclick=|alert('${av.status}')|">🟡</span>
+                        </th:block>
+                    </td>
+                    <td class="pre" th:text="${av.pre}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="opening-hours">
+    <a href="?buchwurm=lea" th:if="${bookworm == 'FLORI'}">Lea</a>
+    <a href="?buchwurm=flori" th:if="${bookworm != 'FLORI'}">Flori</a>
+    &bull;
+    <a target="_blank" href="https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten">Öffnungszeiten</a>
+</div>
+
+</div>
+
+<script>
+    document.querySelectorAll("button.standort").forEach(el => {
+        el.addEventListener("click", e => {
+            console.log(e.target.id);
+            e.target.classList.toggle('active');
+            document.getElementById("avails_" + e.target.id.split("_")[1]).classList.toggle("show");
+        });
+    });
+</script>
+</body>
+</html>
