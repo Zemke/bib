@@ -13,11 +13,14 @@ function parse(D) {
     status = "Transport";
   }
   const avails = toAvails(table.outerHTML.replaceAll(/[\t\n]/g, ""));
+  const now = Date.now();
   return {
     status,
     avails,
     buechereien: Object.keys(avails).sort((a, b) => a === "Hauptstelle" ? -1 : a.localeCompare(b)),
-    updated: Date.now(),
+    updated: now,
+    attempt: now,
+    added: now,
     id: J.getElementById("bibtip_number").textContent,
     isbn: J.getElementById("bibtip_isxn").textContent,
     name: J.getElementById("bibtip_hst").textContent,
