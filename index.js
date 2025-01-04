@@ -3,6 +3,7 @@ const fs = require('fs');
 const ejs = require('ejs');
 const request = require('./request');
 const book = require('./book');
+const url = require('url');
 
 if (!fs.existsSync('x.json')) {
   fs.writeFileSync('x.json', JSON.stringify({books: []}));
@@ -67,7 +68,7 @@ http.createServer(async (req, res) => {
     const body = request.formData(await request.read(req));
     if ("idOrLink" in body) {
       const idOrLink = body["idOrLink"];
-      const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : parseInt(idOrLink);
+      const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : idOrLink;
       await saveBook(id, bookworm);
     } else if ("delete" in body) {
       const idx = X.books.findIndex(b => b.id == body["id"]);
