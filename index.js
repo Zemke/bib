@@ -22,7 +22,7 @@ async function saveBook(id, bookworm) {
 http.createServer(async (req, res) => {
   const bookworm = "FLORI"; // TODO
   if (req.method === "POST") {
-    const body = request.formData(await request.read(req));
+    const body = request.formData(await request.read(req););
     console.log(body);
     if ("idOrLink" in body) {
       const idOrLink = body["idOrLink"];

@@ -52,12 +52,9 @@ async function get(u, headers={}) {
 //  .catch(err => console.error(err));
 
 function formData(fd) {
-  return fd.split("=").reduce((acc, v, i, a) => {
-    if (i % 2 === 0) {
-      acc[v] = null;
-    } else {
-      acc[a[i-1]] = decodeURIComponent(v);
-    }
+  return fd.split("&").reduce((acc, v, i, a) => {
+    const sp = v.split("=");
+    acc[sp[0]] = sp[1];
     return acc;
   }, {});
 }
