@@ -4,7 +4,11 @@ const ejs = require('ejs');
 const request = require('./request');
 const book = require('./book');
 
-const X = {books: []};
+if (!fs.existsSync('x.json')) {
+  fs.writeFileSync('x.json', JSON.stringify({books: []}));
+}
+const X = JSON.parse(fs.readFileSync('x.json', 'utf8'));
+
 const LINK = "https://open.stadt-muenster.de";
 const mock = true;
 
@@ -39,7 +43,7 @@ async function saveBook(id, bookworm) {
   return Promise.resolve(b);
 }
 
-async function refresh(id) {
+async function refreshBook(id) {
   const idx = X.books.findIndex(b => b.id === id);
   if (idx == null || idx === -1) {
     throw new Error(`book ${id} not known`);
@@ -76,7 +80,7 @@ http.createServer(async (req, res) => {
   }
   // TODO show only three latest added initially
   books = X.books.filter(b => b.bookworms.includes(bookworm));
-  books.forEach(b => refresh(b.id));
+  books.forEach(b => refreshBook(b.id));
   res.writeHeader(200, {"Content-Type": "text/html"});
   const vars = {
     books: books.sort((a,b) => b.added - a.added),
@@ -87,6 +91,7 @@ http.createServer(async (req, res) => {
   };
   res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
   res.end();
+  fs.writeFileSync('x.json', JSON.stringify(X));
 }).listen(8000);
 
 
