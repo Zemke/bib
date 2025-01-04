@@ -78,12 +78,13 @@ http.createServer(async (req, res) => {
       }
     }
   }
-  // TODO show only three latest added initially
-  books = X.books.filter(b => b.bookworms.includes(bookworm));
+  const books = X.books
+    .filter(b => b.bookworms.includes(bookworm))
+    .sort((a, b) => b.added - a.added);
   books.forEach(b => refreshBook(b.id));
   res.writeHeader(200, {"Content-Type": "text/html"});
   const vars = {
-    books: books.sort((a,b) => b.added - a.added),
+    books,
     biblink: LINK,
     bookworm,
     collapse: X.books.length > 4 && bookworm !== "FLORI",
