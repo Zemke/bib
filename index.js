@@ -53,8 +53,9 @@ async function refresh(id) {
   if (shouldRefresh) {
     const n = book.parse(await requestBook(id));
     book.update(X.books[idx], n);
+    return Promise.resolve(true);
   } else {
-    return Promise.resolve(X.books[idx]);
+    return Promise.resolve(false);
   }
 }
 
