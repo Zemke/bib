@@ -6,27 +6,12 @@ const book = require('./book');
 
 const X = {books: []};
 const LINK = "https://open.stadt-muenster.de";
-
-async function saveBook(id, bookworm) {
-  const existing = X.books.find(b => b.id === id);
-  if (existing != null) {
-    if (!existing.bookworms.includes(bookworms)) {
-      existing.bookworms.push(bookworm);
-    }
-    return;
-  }
-  //const p = await request.get(
-  //  LINK + "/?id=" + id,
-  //  {"content-type": "text/html,application/xhtml+xml,application/xml"},
-  //);
-  const p = fs.readFileSync('./detail.html', 'utf8');
-  const b = book.parse(p);
-  b.bookworms = [bookworm];
-  X.books.push(b);
-  return Promise.resolve(b);
-}
+const mock = true;
 
 function requestBook(id) {
+  if (mock) {
+    return fs.readFileSync('./detail.html', 'utf8');
+  }
   return request.get(
     LINK + "/?id=" + id,
     {"content-type": "text/html,application/xhtml+xml,application/xml"},
@@ -38,6 +23,20 @@ function requestBook(id) {
       }
       throw err;
     });
+}
+
+async function saveBook(id, bookworm) {
+  const existing = X.books.find(b => b.id === id);
+  if (existing != null) {
+    if (!existing.bookworms.includes(bookworms)) {
+      existing.bookworms.push(bookworm);
+    }
+    return;
+  }
+  const b = book.parse(requestBook(id));
+  b.bookworms = [bookworm];
+  X.books.push(b);
+  return Promise.resolve(b);
 }
 
 async function refresh(id) {
