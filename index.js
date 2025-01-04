@@ -9,7 +9,7 @@ const LINK = "https://open.stadt-muenster.de";
 
 async function saveBook(id, bookworm) {
   //const p = await request.get(
-  //  "https://open.stadt-muenster.de/?id=" + id,
+  //  LINK + "/?id=" + id,
   //  {"content-type": "text/html,application/xhtml+xml,application/xml"},
   //);
   const p = fs.readFileSync('./detail.html', 'utf8');
@@ -20,12 +20,18 @@ async function saveBook(id, bookworm) {
 }
 
 http.createServer(async (req, res) => {
-  //const body = request.formData(await request.read(req));
-  //const idOrLink = body["idOrLink"];
   const bookworm = "FLORI"; // TODO
-  const idOrLink = "0980443";
-  const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : parseInt(idOrLink);
-  const x = await saveBook(id, bookworm);
+  if (req.method === "POST") {
+    const body = request.formData(await request.read(req));
+    console.log(body);
+    if ("idOrLink" in body) {
+      const idOrLink = body["idOrLink"];
+      const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : parseInt(idOrLink);
+      await saveBook(id, bookworm);
+    } else if ("delete" in body) {
+      X.books.splice(X.books.findIndex(b => b.id == body["id"]), 1);
+    }
+  }
   res.writeHeader(200, {"Content-Type": "text/html"});
   const vars = {
     books: X.books,

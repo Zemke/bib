@@ -208,9 +208,9 @@
               <a href="<%= `${biblink}/Permalink.aspx?id=${b.id}` %>" target="_blank">
                   <button>Bücherei</button>
               </a>
-              <form action="/delete" method="post">
-                  <input type="hidden" value="delete" name="method">
-                  <input type="hidden" value="<%= b.id %>" name="idOrLink">
+              <form action="/" method="post">
+                  <input type="hidden" value="true" name="delete">
+                  <input type="hidden" value="<%= b.id %>" name="id">
                   <button type="submit"
                           onclick="return confirm('<%= b.name %>\n<%= b.author %>\n\nWirklich von der Merkliste löschen?');">
                     Löschen
