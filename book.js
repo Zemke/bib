@@ -12,10 +12,12 @@ function parse(D) {
   } else if (cc.includes("Transport")) {
     status = "Transport";
   }
+  const avails = toAvails(table.outerHTML.replaceAll(/[\t\n]/g, ""));
   return {
     status,
+    avails,
+    buechereien: Object.keys(avails).sort((a, b) => a === "Hauptstelle" ? -1 : a.localeCompare(b)),
     updated: Date.now(),
-    avails: toAvails(table.outerHTML.replaceAll(/[\t\n]/g, "")),
     id: J.getElementById("bibtip_number").textContent,
     isbn: J.getElementById("bibtip_isxn").textContent,
     name: J.getElementById("bibtip_hst").textContent,

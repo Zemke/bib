@@ -228,7 +228,7 @@
           </div>
       </div>
       <div class="avails<%= collapse ? '' : ' show' %>" id="<%= 'avails_' + b.id %>">
-          <% Object.keys(b.avails).forEach(a => { %>
+          <% b.buechereien.forEach(a => { %>
             <div class="avail">
                 <h4><%= a %></h4>
                 <table>
