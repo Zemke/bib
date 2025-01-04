@@ -59,7 +59,7 @@ async function refresh(id) {
 }
 
 http.createServer(async (req, res) => {
-  const bookworm = "FLORI"; // TODO
+  const bookworm = req.url.endsWith("/flori") ? "FLORI" : "LEA";
   if (req.method === "POST") {
     const body = request.formData(await request.read(req));
     if ("idOrLink" in body) {
@@ -75,10 +75,11 @@ http.createServer(async (req, res) => {
     }
   }
   // TODO show only three latest added initially
-  X.books.forEach(b => refresh(b.id));
+  books = X.books.filter(b => b.bookworms.includes(bookworm));
+  books.forEach(b => refresh(b.id));
   res.writeHeader(200, {"Content-Type": "text/html"});
   const vars = {
-    books: X.books.sort((a,b) => b.added - a.added),
+    books: books.sort((a,b) => b.added - a.added),
     biblink: LINK,
     bookworm,
     collapse: X.books.length > 4 && bookworm !== "FLORI",

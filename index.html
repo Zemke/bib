@@ -174,7 +174,7 @@
 <body>
 <div class="container">
 
-<form class="add" action="/" method="post">
+<form class="add" action="#add" method="post">
     <input type="text" name="idOrLink" placeholder="ID oder Link">&nbsp;
     <input type="submit" value="OK">
 </form>
@@ -208,7 +208,7 @@
               <a href="<%= `${biblink}/Permalink.aspx?id=${b.id}` %>" target="_blank">
                   <button>Bücherei</button>
               </a>
-              <form action="/" method="post">
+              <form action="#del" method="post">
                   <input type="hidden" value="true" name="delete">
                   <input type="hidden" value="<%= b.id %>" name="id">
                   <button type="submit"
@@ -263,10 +263,10 @@
 
 <div class="opening-hours">
     <% if (bookworm === 'FLORI') { %>
-      <a href="?buchwurm=lea">Lea</a>
+      <a href="/lea">Lea</a>
     <% } %>
     <% if (bookworm === 'LEA') { %>
-      <a href="?buchwurm=flori">Flori</a>
+      <a href="/flori">Flori</a>
     <% } %>
     &bull;
     <a target="_blank" href="<%= opening %>">Öffnungszeiten</a>
