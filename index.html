@@ -174,72 +174,86 @@
 <body>
 <div class="container">
 
-<form class="add" action="#" th:action="@{/(buchwurm=${#strings.toLowerCase(bookworm)})}" method="post">
-    <input type="text" th:value="${idOrLink}" name="idOrLink" placeholder="ID oder Link">&nbsp;
+<form class="add" action="/" method="post">
+    <input type="text" name="idOrLink" placeholder="ID oder Link">&nbsp;
     <input type="submit" value="OK">
 </form>
 
-<p th:if="${books.empty}">Keine Bücher unter Beobachtung.</p>
+<% if (!books.length) { %>
+  <p>Keine Bücher unter Beobachtung.</p>
+<% } %>
 
-<% books.forEach(function(b){ %>
-<div class="book">
-    <div class="meta">
-        <div class="status">
-            <% if (b.status === "Verfügbar") { %>
-              <span>🟢</span>
-            <% } %>
-            <% if (b.status === "Transport") { %>
-              <span>🚚</span>
-            <% } %>
-            <% if (b.status === "Entliehen") { %>
-              <span>🟥</span>
-            <% } %>
-        </div>
-        <div>
-            <h2><%= b.name %></h2>
-            <h3><%= b.author %></h3>
-        </div>
-    </div>
-    <div class="actions">
-        <button class="standort" th:classappend="${collapse ? '' : 'active'}" id="<%= 'standort_' + b.id %>">Standorte</button>
-        <div>
-            <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
-                <button>Bücherei</button>
-            </a>
-            <form action="#" th:action="@{/(buchwurm=${#strings.toLowerCase(bookworm)})}" method="post">
-                <input type="hidden" th:value="delete" name="method">
-                <input type="hidden" th:value="${b.id}" name="idOrLink">
-                <button type="submit">Löschen</button>
-            </form>
-            <span th:text="'Stand: ' + ${#temporals.format(b.updated, 'dd.MM. HH:mm')}"></span>
-        </div>
-    </div>
-    <div class="avails" th:id="@{'avails_' + ${b.id}}" th:classappend="${collapse ? '' : 'show'}">
-        <div class="avail" th:each="a : ${avails[b.id]}">
-            <h4 th:text="${a.key}"></h4>
-            <table>
-                <tr th:each="av : ${#lists.sort(a.value)}">
-                    <td class="pos" th:text="${av.pos}"></td>
-                    <td class="rent" th:attr="title=|${av.status}|">
-                        <span th:if="${av.rent != null}" th:text="${#temporals.format(av.rent,'dd.MM.')}"></span>
-                        <th:block th:unless="${av.rent != null}" th:switch="${av.status}">
-                            <span th:case="'Verfügbar'">🟢</span>
-                            <span th:case="'Transport'">🚚</span>
-                            <span th:case="'Reparatur'">🔧</span>
-                            <span th:case="*" th:attr="onclick=|alert('${av.status}')|">🟡</span>
-                        </th:block>
-                    </td>
-                    <td class="pre" th:text="${av.pre}"></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
+<% books.forEach(b => { %>
+  <div class="book">
+      <div class="meta">
+          <div class="status">
+              <% if (b.status === "Verfügbar") { %>
+                <span>🟢</span>
+              <% } %>
+              <% if (b.status === "Transport") { %>
+                <span>🚚</span>
+              <% } %>
+              <% if (b.status === "Entliehen") { %>
+                <span>🟥</span>
+              <% } %>
+          </div>
+          <div>
+              <h2><%= b.name %></h2>
+              <h3><%= b.author %></h3>
+          </div>
+      </div>
+      <div class="actions">
+          <button class="standort<%= collapse ? '' : ' active' %>" id="<%= 'standort_' + b.id %>">Standorte</button>
+          <div>
+              <a href="<%= `${biblink}/Permalink.aspx?id=${b.id}` %>" target="_blank">
+                  <button>Bücherei</button>
+              </a>
+              <form action="/delete" method="post">
+                  <input type="hidden" value="delete" name="method">
+                  <input type="hidden" value="<%= b.id %>" name="idOrLink">
+                  <button type="submit">Löschen</button>
+              </form>
+              <span th:text="'Stand: ' + ${#temporals.format(b.updated, 'dd.MM. HH:mm')}"></span>
+          </div>
+      </div>
+      <div class="avails<%= collapse ? '' : ' show' %>" id="<%= 'avails_' + b.id %>">
+          <% Object.keys(b.avails).forEach(a => { %>
+            <div class="avail">
+                <h4><%= a %></h4>
+                <table>
+                    <% b.avails[a].forEach(av => { %>
+                      <tr>
+                          <td class="pos"><%= av.standort %></td>
+                          <td class="rent" title="<%= av.status %>">
+                              <% if (av.frist) { %>
+                                <%= av.frist.substring(0, 6) %>
+                              <% } %>
+                              <% if (!av.frist) { %>
+                                <% if (av.status === "Verfügbar") { %>🟢<%=  %><% } %>
+                                <% if (av.status === "Transport") { %>🚚<%=  %><% } %>
+                                <% if (av.status === "Reparatur") { %>🔧<%=  %><% } %>
+                                <% if (!["Verfügbar", "Transport", "Reparatur"].includes(av.status)) { %>
+                                  <span onclick="alert('<%= av.status %>')">🟡</span>
+                                <% } %>
+                              <% } %>
+                          </td>
+                          <td class="pre"><%= av.vorbestellungen %></td>
+                      </tr>
+                  <% }); %>
+                </table>
+            </div>
+          <% }); %>
+      </div>
+  </div>
 <% }); %>
 
 <div class="opening-hours">
-    <a href="?buchwurm=lea" th:if="${bookworm == 'FLORI'}">Lea</a>
-    <a href="?buchwurm=flori" th:if="${bookworm != 'FLORI'}">Flori</a>
+    <% if (bookworm === 'FLORI') { %>
+      <a href="?buchwurm=lea">Lea</a>
+    <% } %>
+    <% if (bookworm === 'LEA') { %>
+      <a href="?buchwurm=flori">Flori</a>
+    <% } %>
     &bull;
     <a target="_blank" href="https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten">Öffnungszeiten</a>
 </div>
@@ -257,3 +271,4 @@
 </script>
 </body>
 </html>
+

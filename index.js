@@ -5,6 +5,7 @@ const request = require('./request');
 const book = require('./book');
 
 const X = {books: []};
+const LINK = "https://open.stadt-muenster.de";
 
 async function saveBook(id) {
   //const p = await request.get(
@@ -20,12 +21,18 @@ async function saveBook(id) {
 http.createServer(async (req, res) => {
   //const body = request.formData(await request.read(req));
   //const idOrLink = body["idOrLink"];
+  const bookworm = "FLORI"; // TODO
   const idOrLink = "0980443";
   const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : parseInt(idOrLink);
   const x = await saveBook(id);
-  console.log(x)
   res.writeHeader(200, {"Content-Type": "text/html"});
-  res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), {books: X.books}));
+  const vars = {
+    books: X.books,
+    biblink: LINK,
+    bookworm,
+    collapse: X.books.length > 4 && bookworm !== "FLORI",
+  };
+  res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
   res.end();
 }).listen(8000);
 
