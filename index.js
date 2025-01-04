@@ -83,7 +83,7 @@ http.createServer(async (req, res) => {
   const books = X.books
     .filter(b => b.bookworms.includes(bookworm))
     .sort((a, b) => b.added - a.added);
-  books.forEach(b => refreshBook(b.id));
+  await Promise.all(books.map(b => refreshBook(b.id)));
   const vars = {
     books,
     biblink: LINK,
