@@ -181,19 +181,27 @@
 
 <p th:if="${books.empty}">Keine Bücher unter Beobachtung.</p>
 
-<div class="book" th:each="b : ${books}">
+<% books.forEach(function(b){ %>
+<div class="book">
     <div class="meta">
         <div class="status">
-            <span th:if="${b.avail}">🟢</span>
-            <span th:if="${not b.avail}">🟥</span>
+            <% if (b.status === "Verfügbar") { %>
+              <span>🟢</span>
+            <% } %>
+            <% if (b.status === "Transport") { %>
+              <span>🚚</span>
+            <% } %>
+            <% if (b.status === "Entliehen") { %>
+              <span>🟥</span>
+            <% } %>
         </div>
         <div>
-            <h2 th:text="${b.name}"></h2>
-            <h3 th:text="${b.author}"></h3>
+            <h2><%= b.name %></h2>
+            <h3><%= b.author %></h3>
         </div>
     </div>
     <div class="actions">
-        <button class="standort" th:classappend="${collapse ? '' : 'active'}" th:id="@{'standort_' + ${b.id}}">Standorte</button>
+        <button class="standort" th:classappend="${collapse ? '' : 'active'}" id="<%= 'standort_' + b.id %>">Standorte</button>
         <div>
             <a th:attr="href=|${biblink}/Permalink.aspx?id=${b.id}|" target="_blank">
                 <button>Bücherei</button>
@@ -227,6 +235,7 @@
         </div>
     </div>
 </div>
+<% }); %>
 
 <div class="opening-hours">
     <a href="?buchwurm=lea" th:if="${bookworm == 'FLORI'}">Lea</a>
