@@ -4,16 +4,17 @@ const jsdom = require("jsdom");
 function parse(D) {
   const J = new jsdom.JSDOM(D).window.document;
   const table = J.querySelectorAll('table')[2];
-  const xx = Array.from(table.querySelectorAll('td:nth-child(4)'))
+  const cc = Array.from(table.querySelectorAll('td:nth-child(4)'))
     .map(el => el.textContent.split(":")[1].replaceAll(/[\t\n]/g, ""))
   let status = "Entliehen";
-  if (xx.includes("Verfügbar")) {
+  if (cc.includes("Verfügbar")) {
     status = "Verfügbar";
-  } else if (xx.includes("Transport")) {
+  } else if (cc.includes("Transport")) {
     status = "Transport";
   }
   return {
     status,
+    updated: Date.now(),
     avails: toAvails(table.outerHTML.replaceAll(/[\t\n]/g, "")),
     id: J.getElementById("bibtip_number").textContent,
     isbn: J.getElementById("bibtip_isxn").textContent,

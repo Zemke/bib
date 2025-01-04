@@ -213,7 +213,18 @@
                   <input type="hidden" value="<%= b.id %>" name="idOrLink">
                   <button type="submit">Löschen</button>
               </form>
-              <span th:text="'Stand: ' + ${#temporals.format(b.updated, 'dd.MM. HH:mm')}"></span>
+              <span>
+                Stand:
+                <%=
+                  new Date(b.updated)
+                    .toLocaleDateString(
+                      'de-DE',
+                      {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric'}
+                    )
+                    .split(",")
+                    .join("")
+                  %>
+              </span>
           </div>
       </div>
       <div class="avails<%= collapse ? '' : ' show' %>" id="<%= 'avails_' + b.id %>">
