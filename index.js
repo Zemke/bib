@@ -82,14 +82,14 @@ http.createServer(async (req, res) => {
     .filter(b => b.bookworms.includes(bookworm))
     .sort((a, b) => b.added - a.added);
   books.forEach(b => refreshBook(b.id));
-  res.writeHeader(200, {"Content-Type": "text/html"});
   const vars = {
     books,
     biblink: LINK,
     bookworm,
-    collapse: X.books.length > 4 && bookworm !== "FLORI",
+    collapse: books.length > 4 && bookworm !== "FLORI",
     opening: "https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten",
   };
+  res.writeHeader(200, {"Content-Type": "text/html"});
   res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
   res.end();
   fs.writeFileSync('x.json', JSON.stringify(X));
