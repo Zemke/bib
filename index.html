@@ -1,182 +1,182 @@
 <!DOCTYPE HTML>
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>📚 bib</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
+  <title>📚 bib</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
 
-        html, body {
-            font-size:90%;
-        }
+    html, body {
+      font-size:90%;
+    }
 
-        .container {
-            max-width: 27rem;
-            margin: 0 auto;
-        }
+    .container {
+      max-width: 27rem;
+      margin: 0 auto;
+    }
 
-        .container > p {
-            padding-left: .5rem;
-        }
+    .container > p {
+      padding-left: .5rem;
+    }
 
-        button:hover,
-        input[type=button]:hover,
-        input[type=submit]:hover {
-            cursor: pointer;
-        }
+    button:hover,
+    input[type=button]:hover,
+    input[type=submit]:hover {
+      cursor: pointer;
+    }
 
-        form.add {
-            padding: 1rem .5rem;
-            white-space: nowrap;
-            display: flex;
-        }
+    form.add {
+      padding: 1rem .5rem;
+      white-space: nowrap;
+      display: flex;
+    }
 
-        form.add input,
-        form.add button {
-            font-size: 1rem;
-            padding: .5rem;
-        }
+    form.add input,
+    form.add button {
+      font-size: 1rem;
+      padding: .5rem;
+    }
 
-        form.add input[type="text"] {
-            width: 100%;
-        }
+    form.add input[type="text"] {
+      width: 100%;
+    }
 
-        .book {
-            margin: 2rem 0;
-        }
+    .book {
+      margin: 2rem 0;
+    }
 
-        .book .meta {
-            display: flex;
-            align-items: center;
-        }
+    .book .meta {
+      display: flex;
+      align-items: center;
+    }
 
-        .book .meta div {
-            padding: .5rem;
-        }
+    .book .meta div {
+      padding: .5rem;
+    }
 
-        .book .meta .status {
-        font-size: 2.5rem;
-        }
+    .book .meta .status {
+    font-size: 2.5rem;
+    }
 
-        .book .avail {
-            margin: 1rem .5rem;
-        }
+    .book .avail {
+      margin: 1rem .5rem;
+    }
 
-        .book .avail table td.pos {
-            width: 21rem;
-        }
+    .book .avail table td.pos {
+      width: 21rem;
+    }
 
-        .book .avail table td.rent {
-            width: 3rem;
-            text-align: center;
-        }
+    .book .avail table td.rent {
+      width: 3rem;
+      text-align: center;
+    }
 
-        .book .avail table td.pre {
-            text-align: right;
-            padding-left: .5rem;
-        }
+    .book .avail table td.pre {
+      text-align: right;
+      padding-left: .5rem;
+    }
 
-        .book .avail table {
-            border-collapse: collapse;
-        }
+    .book .avail table {
+      border-collapse: collapse;
+    }
 
-        .book .avail table td, table td {
-            border: 1px solid rgba(0,0,0,.1);
-            padding: .2rem;
-        }
+    .book .avail table td, table td {
+      border: 1px solid rgba(0,0,0,.1);
+      padding: .2rem;
+    }
 
-        .book .avail table tr:first-child td {
-            border-top: 0;
-        }
+    .book .avail table tr:first-child td {
+      border-top: 0;
+    }
 
-        .book .avail table tr td:first-child,
-        .book .avail table tr th:first-child {
-            border-left: 0;
-        }
+    .book .avail table tr td:first-child,
+    .book .avail table tr th:first-child {
+      border-left: 0;
+    }
 
-        .book .avail table tr td:last-child,
-        .book .avail table tr th:last-child {
-            border-right: 0;
-        }
+    .book .avail table tr td:last-child,
+    .book .avail table tr th:last-child {
+      border-right: 0;
+    }
 
-        .avails {
-            height: 0;
-            overflow: hidden;
-        }
+    .avails {
+      height: 0;
+      overflow: hidden;
+    }
 
-        .avails.show {
-            height: auto;
-        }
+    .avails.show {
+      height: auto;
+    }
 
-        .actions {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 .6rem;
-        }
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 .6rem;
+    }
 
-        .actions > div {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .actions > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        .actions > div > * {
-            margin-left: .5rem;
-        }
+    .actions > div > * {
+      margin-left: .5rem;
+    }
 
-        .actions button {
-            padding: .1rem .5rem;
-        }
+    .actions button {
+      padding: .1rem .5rem;
+    }
 
-        .actions button.standort.active {
-            border-style: inset;
-        }
+    .actions button.standort.active {
+      border-style: inset;
+    }
 
-        .opening-hours {
-            text-align: right;
-            padding: 1rem 0;
-        }
+    .opening-hours {
+      text-align: right;
+      padding: 1rem 0;
+    }
 
-        .opening-hours a {
-            color: cyan;
-            font-size: 1rem;
-            text-decoration: none;
-        }
+    .opening-hours a {
+      color: cyan;
+      font-size: 1rem;
+      text-decoration: none;
+    }
 
-        @media (prefers-color-scheme: dark) {
-            html, body {
-                background: #181818;
-                color: #afafaf;
-            }
+    @media (prefers-color-scheme: dark) {
+      html, body {
+        background: #181818;
+        color: #afafaf;
+      }
 
-            .book .avail table td, table td {
-                border: 1px solid rgba(255,255,255,.1);
-                padding: .2rem;
-            }
+      .book .avail table td, table td {
+        border: 1px solid rgba(255,255,255,.1);
+        padding: .2rem;
+      }
 
-            button, input {
-                background-color: #181818;
-                color: #afafaf;
-            }
+      button, input {
+        background-color: #181818;
+        color: #afafaf;
+      }
 
-            .status {
-                opacity: .7;
-            }
-        }
-    </style>
+      .status {
+        opacity: .7;
+      }
+    }
+  </style>
 </head>
 <body>
 <div class="container">
 
 <form class="add" action="#add" method="post">
-    <input type="text" name="idOrLink" placeholder="ID oder Link">&nbsp;
-    <input type="submit" value="OK">
+  <input type="text" name="idOrLink" placeholder="ID oder Link">&nbsp;
+  <input type="submit" value="OK">
 </form>
 
 <% if (!books.length) { %>
@@ -185,102 +185,102 @@
 
 <% books.forEach(b => { %>
   <div class="book">
-      <div class="meta">
-          <div class="status">
-              <% if (b.status === "Verfügbar") { %>
-                <span>🟢</span>
-              <% } %>
-              <% if (b.status === "Transport") { %>
-                <span>🚚</span>
-              <% } %>
-              <% if (b.status === "Entliehen") { %>
-                <span>🟥</span>
-              <% } %>
-          </div>
-          <div>
-              <h2><%= b.name %></h2>
-              <h3><%= b.author %></h3>
-          </div>
+    <div class="meta">
+      <div class="status">
+        <% if (b.status === "Verfügbar") { %>
+        <span>🟢</span>
+        <% } %>
+        <% if (b.status === "Transport") { %>
+        <span>🚚</span>
+        <% } %>
+        <% if (b.status === "Entliehen") { %>
+        <span>🟥</span>
+        <% } %>
       </div>
-      <div class="actions">
-          <button class="standort<%= collapse ? '' : ' active' %>" id="<%= 'standort_' + b.id %>">Standorte</button>
-          <div>
-              <a href="<%= `${biblink}/Permalink.aspx?id=${b.id}` %>" target="_blank">
-                  <button>Bücherei</button>
-              </a>
-              <form action="#del" method="post">
-                  <input type="hidden" value="true" name="delete">
-                  <input type="hidden" value="<%= b.id %>" name="id">
-                  <button type="submit"
-                          onclick="return confirm('<%= b.name %>\n<%= b.author %>\n\nWirklich von der Merkliste löschen?');">
-                    Löschen
-                  </button>
-              </form>
-              <span>
-                Stand:
-                <%=
-                  new Date(b.updated)
-                    .toLocaleDateString(
-                      'de-DE',
-                      {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric'}
-                    )
-                    .split(",")
-                    .join("")
-                  %>
-              </span>
-          </div>
+      <div>
+        <h2><%= b.name %></h2>
+        <h3><%= b.author %></h3>
       </div>
-      <div class="avails<%= collapse ? '' : ' show' %>" id="<%= 'avails_' + b.id %>">
-          <% b.buechereien.forEach(a => { %>
-            <div class="avail">
-                <h4><%= a %></h4>
-                <table>
-                    <% b.avails[a].forEach(av => { %>
-                      <tr>
-                          <td class="pos"><%= av.standort %></td>
-                          <td class="rent" title="<%= av.status %>">
-                              <% if (av.frist) { %>
-                                <%= av.frist.substring(0, 6) %>
-                              <% } %>
-                              <% if (!av.frist) { %>
-                                <% if (av.status === "Verfügbar") { %>🟢<%=  %><% } %>
-                                <% if (av.status === "Transport") { %>🚚<%=  %><% } %>
-                                <% if (av.status === "Reparatur") { %>🔧<%=  %><% } %>
-                                <% if (!["Verfügbar", "Transport", "Reparatur"].includes(av.status)) { %>
-                                  <span onclick="alert('<%= av.status %>')">🟡</span>
-                                <% } %>
-                              <% } %>
-                          </td>
-                          <td class="pre"><%= av.vorbestellungen %></td>
-                      </tr>
-                  <% }); %>
-                </table>
-            </div>
+    </div>
+    <div class="actions">
+      <button class="standort<%= collapse ? '' : ' active' %>" id="<%= 'standort_' + b.id %>">Standorte</button>
+      <div>
+        <a href="<%= `${biblink}/Permalink.aspx?id=${b.id}` %>" target="_blank">
+          <button>Bücherei</button>
+        </a>
+        <form action="#del" method="post">
+          <input type="hidden" value="true" name="delete">
+          <input type="hidden" value="<%= b.id %>" name="id">
+          <button type="submit"
+              onclick="return confirm('<%= b.name %>\n<%= b.author %>\n\nWirklich von der Merkliste löschen?');">
+          Löschen
+          </button>
+        </form>
+        <span>
+        Stand:
+        <%=
+          new Date(b.updated)
+          .toLocaleDateString(
+            'de-DE',
+            {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric'}
+          )
+          .split(",")
+          .join("")
+          %>
+        </span>
+      </div>
+    </div>
+    <div class="avails<%= collapse ? '' : ' show' %>" id="<%= 'avails_' + b.id %>">
+      <% b.buechereien.forEach(a => { %>
+      <div class="avail">
+        <h4><%= a %></h4>
+        <table>
+          <% b.avails[a].forEach(av => { %>
+            <tr>
+              <td class="pos"><%= av.standort %></td>
+              <td class="rent" title="<%= av.status %>">
+                <% if (av.frist) { %>
+                <%= av.frist.substring(0, 6) %>
+                <% } %>
+                <% if (!av.frist) { %>
+                <% if (av.status === "Verfügbar") { %>🟢<%=  %><% } %>
+                <% if (av.status === "Transport") { %>🚚<%=  %><% } %>
+                <% if (av.status === "Reparatur") { %>🔧<%=  %><% } %>
+                <% if (!["Verfügbar", "Transport", "Reparatur"].includes(av.status)) { %>
+                  <span onclick="alert('<%= av.status %>')">🟡</span>
+                <% } %>
+                <% } %>
+              </td>
+              <td class="pre"><%= av.vorbestellungen %></td>
+            </tr>
           <% }); %>
+        </table>
       </div>
+      <% }); %>
+    </div>
   </div>
 <% }); %>
 
 <div class="opening-hours">
-    <% if (bookworm === 'FLORI') { %>
-      <a href="/lea">Lea</a>
-    <% } %>
-    <% if (bookworm === 'LEA') { %>
-      <a href="/flori">Flori</a>
-    <% } %>
-    &bull;
-    <a target="_blank" href="<%= opening %>">Öffnungszeiten</a>
+  <% if (bookworm === 'FLORI') { %>
+    <a href="/lea">Lea</a>
+  <% } %>
+  <% if (bookworm === 'LEA') { %>
+    <a href="/flori">Flori</a>
+  <% } %>
+  &bull;
+  <a target="_blank" href="<%= opening %>">Öffnungszeiten</a>
 </div>
 
 </div>
 
 <script>
-    document.querySelectorAll("button.standort").forEach(el => {
-        el.addEventListener("click", e => {
-            e.target.classList.toggle('active');
-            document.getElementById("avails_" + e.target.id.split("_")[1]).classList.toggle("show");
-        });
+  document.querySelectorAll("button.standort").forEach(el => {
+    el.addEventListener("click", e => {
+      e.target.classList.toggle('active');
+      document.getElementById("avails_" + e.target.id.split("_")[1]).classList.toggle("show");
     });
+  });
 </script>
 </body>
 </html>
