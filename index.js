@@ -32,7 +32,7 @@ function requestBook(id) {
 async function saveBook(id, bookworm) {
   const existing = X.books.find(b => b.id === id);
   if (existing != null) {
-    if (!existing.bookworms.includes(bookworms)) {
+    if (!existing.bookworms.includes(bookworm)) {
       existing.bookworms.push(bookworm);
     }
     return;

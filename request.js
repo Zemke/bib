@@ -50,7 +50,7 @@ async function get(u, headers={}) {
 function formData(fd) {
   return fd.split("&").reduce((acc, v, i, a) => {
     const sp = v.split("=");
-    acc[sp[0]] = sp[1];
+    acc[decodeURIComponent(sp[0])] = decodeURIComponent(sp[1]);
     return acc;
   }, {});
 }
