@@ -217,15 +217,15 @@
           </button>
         </form>
         <span>
-        Stand:
-        <%=
-          new Date(b.updated)
-          .toLocaleDateString(
-            'de-DE',
-            {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric'}
-          )
-          .split(",")
-          .join("")
+          Stand:
+          <%=
+            new Date(b.updated)
+              .toLocaleDateString(
+                'de-DE',
+                {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric'}
+              )
+              .split(",")
+              .join("")
           %>
         </span>
       </div>
