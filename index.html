@@ -211,7 +211,10 @@
               <form action="/delete" method="post">
                   <input type="hidden" value="delete" name="method">
                   <input type="hidden" value="<%= b.id %>" name="idOrLink">
-                  <button type="submit">Löschen</button>
+                  <button type="submit"
+                          onclick="return confirm('<%= b.name %>\n<%= b.author %>\n\nWirklich von der Merkliste löschen?');">
+                    Löschen
+                  </button>
               </form>
               <span>
                 Stand:
