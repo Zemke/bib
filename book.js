@@ -43,5 +43,13 @@ function toAvails(table) {
     }, {});
 }
 
+function update(ref, b) {
+  const upd = ["status", "avails", "buechereien", "updated", "id", "isbn", "name", "author", "release"]
+  for (const u of upd) {
+    ref[u] = b[u];
+  }
+}
+
 module.exports.parse = parse;
+module.exports.update = update;
 

@@ -26,6 +26,38 @@ async function saveBook(id, bookworm) {
   return Promise.resolve(b);
 }
 
+function requestBook(id) {
+  return request.get(
+    LINK + "/?id=" + id,
+    {"content-type": "text/html,application/xhtml+xml,application/xml"},
+  )
+    .catch(err => {
+      const idx = X.books.findIndex(b => b.id = id);
+      if (idx != null && idx !== -1) {
+        X.books[idx].attempt = Date.now();
+      }
+      throw err;
+    });
+}
+
+async function refresh(id) {
+  const idx = X.books.findIndex(b => b.id === id);
+  if (idx == null || idx === -1) {
+    throw new Error(`book ${id} not known`);
+  }
+  const now = new Date();
+  const openingHours = now.getHours() >= 6 && now.getHours() <= 22;
+  const shouldRefresh =
+    (openingHours && now.getTime() - X.books[idx].attempt >= 1000 * 60 * 15)
+    || (!openingHours && now.getTime() - X.books[idx].attempt >= 1000 * 60 * 60);
+  if (shouldRefresh) {
+    const n = book.parse(await requestBook(id));
+    book.update(X.books[idx], n);
+  } else {
+    return Promise.resolve(X.books[idx]);
+  }
+}
+
 http.createServer(async (req, res) => {
   const bookworm = "FLORI"; // TODO
   if (req.method === "POST") {
@@ -42,6 +74,7 @@ http.createServer(async (req, res) => {
       }
     }
   }
+  X.books.sort((a,b) => b.added - a.added).splice(0, 3).forEach(b => refresh(b.id));
   res.writeHeader(200, {"Content-Type": "text/html"});
   const vars = {
     books: X.books,
