@@ -9,17 +9,14 @@ if (!fs.existsSync('x.json')) {
 }
 const X = JSON.parse(fs.readFileSync('x.json', 'utf8'));
 
-const LINK = "https://open.stadt-muenster.de";
-const mock = true;
-
 function requestBook(id) {
-  if (mock) {
+  if (process.env.MOCK !== "0") {
     return new Promise((resolve, _) => {
       setTimeout(() => resolve(fs.readFileSync('./detail.html', 'utf8')), 2000);
     });
   }
   return request.get(
-    LINK + "/?id=" + id,
+    process.env.BIBLINK + "/?id=" + id,
     {"content-type": "text/html,application/xhtml+xml,application/xml"},
   )
     .catch(err => {
@@ -86,7 +83,7 @@ http.createServer(async (req, res) => {
   await Promise.all(books.map(b => refreshBook(b.id)));
   const vars = {
     books,
-    biblink: LINK,
+    biblink: process.env.BIBLINK,
     bookworm,
     collapse: books.length > 4 && bookworm !== "FLORI",
     opening: "https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten",
