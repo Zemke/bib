@@ -47,10 +47,6 @@ async function get(u, headers={}) {
   });
 }
 
-//post("https://echo.free.beeceptor.com/sample-request", "[1,2]", {'content-type': 'text/plain'})
-//  .then(res => console.log(res))
-//  .catch(err => console.error(err));
-
 function formData(fd) {
   return fd.split("&").reduce((acc, v, i, a) => {
     const sp = v.split("=");

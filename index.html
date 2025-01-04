@@ -277,7 +277,6 @@
 <script>
     document.querySelectorAll("button.standort").forEach(el => {
         el.addEventListener("click", e => {
-            console.log(e.target.id);
             e.target.classList.toggle('active');
             document.getElementById("avails_" + e.target.id.split("_")[1]).classList.toggle("show");
         });
