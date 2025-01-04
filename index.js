@@ -14,7 +14,9 @@ const mock = true;
 
 function requestBook(id) {
   if (mock) {
-    return fs.readFileSync('./detail.html', 'utf8');
+    return new Promise((resolve, _) => {
+      setTimeout(() => resolve(fs.readFileSync('./detail.html', 'utf8')), 2000);
+    });
   }
   return request.get(
     LINK + "/?id=" + id,
@@ -37,7 +39,7 @@ async function saveBook(id, bookworm) {
     }
     return;
   }
-  const b = book.parse(requestBook(id));
+  const b = book.parse(await requestBook(id));
   b.bookworms = [bookworm];
   X.books.push(b);
   return Promise.resolve(b);
