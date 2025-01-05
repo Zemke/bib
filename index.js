@@ -60,11 +60,17 @@ http.createServer(async (req, res) => {
     return;
   }
   const bookworm = req.url.endsWith("/flori") ? "FLORI" : "LEA";
-  if (req.url.split("/")[0] === "api") {
-    // TODO API
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.write(JSON.stringify({hello: "world"}));
-    res.end();
+  if (req.url.split("/")[1] === "api") {
+    // API
+    if (["flori", "lea"].includes(req.url.split("/")[2])) {
+      res.writeHead(200, {"Content-Type": "application/json"});
+      res.write(JSON.stringify(X.books.filter(b => b.bookworms.includes(bookworm))));
+      res.end();
+    } else {
+      res.writeHead(200, {"Content-Type": "application/json"});
+      res.write(JSON.stringify(X));
+      res.end();
+    }
     return;
   } else if (req.method === "POST") {
     // add or delete book
