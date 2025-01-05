@@ -2,8 +2,14 @@
   "name": "bib",
   "version": "0.1.0",
   "main": "index.js",
+  "scripts": {
+    "dev": "BIBLINK=https://open.stadt-muenster.de MOCK=1 nodemon -e js,html index.js"
+  },
   "dependencies": {
     "ejs": "^3.1.10",
     "jsdom": "^25.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
