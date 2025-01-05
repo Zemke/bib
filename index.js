@@ -65,6 +65,7 @@ http.createServer(async (req, res) => {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.write(JSON.stringify({hello: "world"}));
     res.end();
+    return;
   } else if (req.method === "POST") {
     // add or delete book
     const body = request.formData(await request.read(req));
@@ -105,6 +106,10 @@ http.createServer(async (req, res) => {
     res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
     res.end();
     fs.writeFileSync('x.json', JSON.stringify(X));
+    return;
   }
+  res.writeHead(404);
+  res.write("404");
+  res.end();
 }).listen(8000);
 
