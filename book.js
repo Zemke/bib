@@ -19,7 +19,6 @@ function parse(D) {
     avails,
     buechereien: Object.keys(avails).sort((a, b) => a === "Hauptstelle" ? -1 : a.localeCompare(b)),
     updated: now,
-    attempt: now,
     added: now,
     id: J.getElementById("bibtip_number").textContent,
     isbn: J.getElementById("bibtip_isxn").textContent,
