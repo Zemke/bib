@@ -46,10 +46,14 @@ async function saveBook(id, bookworm) {
 
 async function refreshBook(id) {
   console.info('refreshing', id);
-  return book.update(
-    X.books.find(b => b.id === id),
-    book.parse(await requestBook(id))
-  );
+  try {
+    return book.update(
+      X.books.find(b => b.id === id),
+      book.parse(await requestBook(id))
+    );
+  } catch (err) {
+    console.error("couldn't refresh book", id, err);
+  }
 }
 
 http.createServer(async (req, res) => {
@@ -78,7 +82,11 @@ http.createServer(async (req, res) => {
     if ("idOrLink" in body) {
       const idOrLink = body["idOrLink"];
       const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : idOrLink;
-      await saveBook(id, bookworm);
+      try {
+        await saveBook(id, bookworm);
+      } catch (err) {
+        console.error("couldn't load book", id, err);
+      }
     } else if ("delete" in body) {
       const idx = X.books.findIndex(b => b.id == body["id"]);
       X.books[idx].bookworms = X.books[idx].bookworms.filter(bw => bw !== bookworm);
