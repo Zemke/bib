@@ -11,6 +11,10 @@ if (!fs.existsSync('x.json')) {
 const X = JSON.parse(fs.readFileSync('x.json', 'utf8'));
 
 function requestBook(id) {
+  const idx = X.books.findIndex(b => b.id = id);
+  if (idx != null && idx !== -1) {
+    X.books[idx].attempt = Date.now();
+  }
   if (process.env.MOCK !== "0") {
     return new Promise((resolve, _) => {
       setTimeout(() => resolve(fs.readFileSync('./detail.html', 'utf8')), 2000);
@@ -19,14 +23,7 @@ function requestBook(id) {
   return request.get(
     process.env.BIBLINK + "/?id=" + id,
     {"content-type": "text/html,application/xhtml+xml,application/xml"},
-  )
-    .catch(err => {
-      const idx = X.books.findIndex(b => b.id = id);
-      if (idx != null && idx !== -1) {
-        X.books[idx].attempt = Date.now();
-      }
-      throw err;
-    });
+  );
 }
 
 async function saveBook(id, bookworm) {
@@ -54,6 +51,7 @@ async function refreshBook(id) {
     (openingHours && now.getTime() - X.books[idx].attempt >= 1000 * 60 * 15)
     || (!openingHours && now.getTime() - X.books[idx].attempt >= 1000 * 60 * 60);
   if (shouldRefresh) {
+    console.log('refreshing');
     const n = book.parse(await requestBook(id));
     book.update(X.books[idx], n);
     return Promise.resolve(true);
