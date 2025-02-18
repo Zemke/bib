@@ -92,27 +92,37 @@ async function refreshBook(id) {
     "Reparatur": "🔧",
     "_": "🟡",
   };
+  const earliestFristFn = b =>
+    Object.values(b.avails)
+      .flat()
+      .map(a => a.frist)
+      .filter(f => f)
+      .map(f => f.split(".").reverse().join("-"))
+      .map(f => Date.parse(f))
+      .sort((f1, f2) => f1 - f2)[0] || -1;
   let upd = null;
-  books.forEach(b => {
-    console.log(
-      b.status in status ? status[b.status] : b.status,
-      `\x1b[1m${b.name}\x1b[0m`
-    );
-    console.log(b.id);
-    upd = upd == null || b.updated < upd ? b.updated : upd;
-    b.buechereien.forEach(bu => {
-      console.log(bu);
-      b.avails[bu].forEach(a => {
-        console.log(
-          a.status in status ? status[a.status] : a.status,
-          a.frist,
-          a.standort,
-          a.vorbestellungen !== "0" ? `\x1b[31m (${a.vorbestellungen}) \x1b[0m` : ''
-        );
+  books
+    .sort((b1, b2) => earliestFristFn(b1) - earliestFristFn(b2))
+    .forEach(b => {
+      console.log(
+        b.status in status ? status[b.status] : b.status,
+        `\x1b[1m${b.name}\x1b[0m`
+      );
+      console.log(b.id);
+      upd = upd == null || b.updated < upd ? b.updated : upd;
+      b.buechereien.forEach(bu => {
+        console.log(bu);
+        b.avails[bu].forEach(a => {
+          console.log(
+            a.status in status ? status[a.status] : a.status,
+            a.frist,
+            a.standort,
+            a.vorbestellungen !== "0" ? `\x1b[31m (${a.vorbestellungen}) \x1b[0m` : ''
+          );
+        });
       });
+      console.log();
     });
-    console.log();
-  });
   console.log(
     new Date(upd).toLocaleString('de'),
     Math.floor((Date.now() - upd) / 1000 / 60, 5),
