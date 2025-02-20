@@ -96,7 +96,7 @@ async function refreshBook(id) {
     Object.values(b.avails)
       .flat()
       .map(a => a.frist)
-      .filter(f => f)
+      .map(f => f || '0')
       .map(f => f.split(".").reverse().join("-"))
       .map(f => Date.parse(f))
       .sort((f1, f2) => f1 - f2)[0] || -1;
