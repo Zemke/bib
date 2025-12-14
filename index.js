@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const ejs = require('ejs');
 const request = require('./request');
-const book = require('./book');
+const book = require('./book_ol');
 const url = require('url');
 
 if (!fs.existsSync('x.json')) {
@@ -25,7 +25,7 @@ function requestBook(id) {
     });
   }
   return request.get(
-    process.env.BIBLINK + "/?id=" + id,
+    process.env.BIBLINK + "/webopac/detail.aspx/?data=" + id,
     {"content-type": "text/html,application/xhtml+xml,application/xml"},
   );
 }
@@ -81,7 +81,7 @@ http.createServer(async (req, res) => {
     const body = request.formData(await request.read(req));
     if ("idOrLink" in body) {
       const idOrLink = body["idOrLink"];
-      const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : idOrLink;
+      const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.data : idOrLink;
       try {
         await saveBook(id, bookworm);
       } catch (err) {

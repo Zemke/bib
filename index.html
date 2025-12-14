@@ -205,7 +205,7 @@
     <div class="actions">
       <button class="standort<%= collapse ? '' : ' active' %>" id="<%= 'standort_' + b.id %>">Standorte</button>
       <div>
-        <a href="<%= `${biblink}/Permalink.aspx?id=${b.id}` %>" target="_blank">
+        <a href="<%= `${biblink}/?data=${b.id}&share=true` %>" target="_blank">
           <button>Bücherei</button>
         </a>
         <form action="#del" method="post">
