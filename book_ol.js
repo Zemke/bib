@@ -54,7 +54,7 @@ function toAvails(elem) {
 
 function toStatus(c) {
   let status = "Entliehen";
-  if (c.includes("verfügbar")) {
+  if (c.includes("verf")) {
     status = "Verfügbar";
   } else if (c.includes("transport")) {
     status = "Transport";
