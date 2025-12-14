@@ -1,7 +1,7 @@
 const fs = require('fs');
 const url = require('url');
 const request = require('./request');
-const book = require('./book');
+const book = require('./book_ol');
 
 const bookworm = "FLORI";
 if (!fs.existsSync('x.json')) {
@@ -25,7 +25,7 @@ function requestBook(id) {
     });
   }
   return request.get(
-    process.env.BIBLINK + "/?id=" + id,
+    process.env.BIBLINK + "/webopac/detail.aspx/?data=" + id,
     {"content-type": "text/html,application/xhtml+xml,application/xml"},
   );
 }
@@ -58,7 +58,7 @@ async function refreshBook(id) {
 (async () => {
   if (process.argv.length === 4 && process.argv[2] === 'add') {
     const idOrLink = process.argv[3];
-    const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.id : idOrLink;
+    const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.data : idOrLink;
     try {
       await saveBook(id, bookworm);
     } catch (err) {
