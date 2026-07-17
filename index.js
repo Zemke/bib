@@ -19,6 +19,7 @@ if (!fs.existsSync(xfile)) {
     }));
 }
 const X = JSON.parse(fs.readFileSync(xfile, 'utf8'));
+const port = 8000;
 
 function requestBook(id) {
   if (process.env.MOCK !== "0") {
@@ -127,5 +128,7 @@ http.createServer(async (req, res) => {
   res.writeHead(404);
   res.write("404");
   res.end();
-}).listen(8000);
+}).listen(port);
+
+console.log("http://localhost:" + port)
 
