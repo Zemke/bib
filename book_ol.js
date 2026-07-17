@@ -60,6 +60,8 @@ function toStatus(c) {
     status = "Verfügbar";
   } else if (c.includes("transport")) {
     status = "Transport";
+  } else if (c.includes("vorbestellt")) {
+    status = "Vorbestellt";
   }
   return status;
 }

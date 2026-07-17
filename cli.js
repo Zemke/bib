@@ -92,6 +92,7 @@ async function refreshBook(id) {
     "Transport": "🚚",
     "Entliehen": "🟥",
     "Reparatur": "🔧",
+    "Vorbestellt": "⭕️",
     "_": "🟡",
   };
   const earliestFristFn = b =>
@@ -117,7 +118,7 @@ async function refreshBook(id) {
         b.avails[bu].forEach(a => {
           console.log(
             a.status in status ? status[a.status] : a.status,
-            a.frist,
+            a.frist || '',
             a.standort,
             a.vorbestellungen !== "0" ? `\x1b[31m (${a.vorbestellungen}) \x1b[0m` : ''
           );

@@ -200,6 +200,9 @@
         <% if (b.status === "Entliehen") { %>
         <span>🟥</span>
         <% } %>
+        <% if (b.status === "Vorbestellt") { %>
+        <span>⭕️</span>
+        <% } %>
       </div>
       <div>
         <h2><%= b.name %></h2>
@@ -250,7 +253,8 @@
                 <% if (av.status === "Verfügbar") { %>🟢<%=  %><% } %>
                 <% if (av.status === "Transport") { %>🚚<%=  %><% } %>
                 <% if (av.status === "Reparatur") { %>🔧<%=  %><% } %>
-                <% if (!["Verfügbar", "Transport", "Reparatur"].includes(av.status)) { %>
+                <% if (av.status === "Vorbestellt") { %>⭕️<%=  %><% } %>
+                <% if (!["Verfügbar", "Transport", "Reparatur", "Vorbestellt"].includes(av.status)) { %>
                   <span onclick="alert('<%= av.status %>')">🟡</span>
                 <% } %>
                 <% } %>
