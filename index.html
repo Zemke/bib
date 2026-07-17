@@ -169,6 +169,10 @@
         opacity: .7;
       }
     }
+
+    a.name {
+      font-variant-caps: all-small-caps;
+    }
   </style>
 </head>
 <body>
@@ -262,13 +266,12 @@
 <% }); %>
 
 <div class="opening-hours">
-  <% if (bookworm === 'FLORI') { %>
-    <a href="/lea">Lea</a>
-  <% } %>
-  <% if (bookworm === 'LEA') { %>
-    <a href="/flori">Flori</a>
-  <% } %>
-  &bull;
+  <% worms.forEach(w => { %>
+    <% if (w !== bookworm) { %>
+      <a href="/<%= w %>" class="name"><%= w %></a>
+      &bull;
+    <% } %>
+  <% }); %>
   <a target="_blank" href="<%= opening %>">Öffnungszeiten</a>
 </div>
 

@@ -4,17 +4,17 @@ const url = require('url');
 const request = require('./request');
 const book = require('./book_ol');
 
-const bookworm = "FLORI";
+const bookworm = process.env.WORMS.split(",")[0]
 const xfile = path.join(__dirname, "x.json");
 if (!fs.existsSync(xfile)) {
   fs.writeFileSync(
     xfile,
     JSON.stringify({
       books: [],
-      bookworms: {
-        FLORI: {refresh: -1},
-        LEA: {refresh: -1},
-      }
+      bookworms: worms.reduce((acc, v) => {
+        acc[v] = {refresh: -1};
+        return acc;
+      }, {})
     }));
 }
 

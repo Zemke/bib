@@ -7,15 +7,18 @@ const book = require('./book_ol');
 const url = require('url');
 
 const xfile = path.join(__dirname, "x.json");
+const worms = process.env.WORMS == null
+  ? ["asdf"]
+  : process.env.WORMS.split(",")
 if (!fs.existsSync(xfile)) {
   fs.writeFileSync(
     xfile,
     JSON.stringify({
       books: [],
-      bookworms: {
-        FLORI: {refresh: -1},
-        LEA: {refresh: -1},
-      }
+      bookworms: worms.reduce((acc, v) => {
+        acc[v] = {refresh: -1};
+        return acc;
+      }, {})
     }));
 }
 const X = JSON.parse(fs.readFileSync(xfile, 'utf8'));
@@ -66,10 +69,12 @@ http.createServer(async (req, res) => {
     res.end();
     return;
   }
-  const bookworm = req.url.endsWith("/flori") ? "FLORI" : "LEA";
+  const worm_param = req.url.split("/").slice(-1)[0];
+  const bookworm = worms
+    .filter(w => w.toLowerCase() === worm_param.slice(0, w.length+1).toLowerCase())[0] || worms[0];
   if (req.url.split("/")[1] === "api") {
     // API
-    if (["flori", "lea"].includes(req.url.split("/")[2])) {
+    if (worms.includes(req.url.split("/")[2])) {
       res.writeHead(200, {"Content-Type": "application/json"});
       res.write(JSON.stringify(X.books.filter(b => b.bookworms.includes(bookworm))));
       res.end();
@@ -98,7 +103,7 @@ http.createServer(async (req, res) => {
       }
     }
   }
-  if (req.url === "/" || req.url === "/flori" || req.url === "/lea") {
+  if (req.url === "/" || worms.map(w => "/" + w).includes(req.url)) {
     // index
     const books = X.books
       .filter(b => b.bookworms.includes(bookworm))
@@ -116,7 +121,8 @@ http.createServer(async (req, res) => {
       books,
       biblink: process.env.BIBLINK,
       bookworm,
-      collapse: books.length > 4 && bookworm !== "FLORI",
+      worms,
+      collapse: books.length > 4,
       opening: book.opening
     };
     res.writeHead(200, {"Content-Type": "text/html"});
