@@ -114,7 +114,7 @@ http.createServer(async (req, res) => {
       biblink: process.env.BIBLINK,
       bookworm,
       collapse: books.length > 4 && bookworm !== "FLORI",
-      opening: "https://www.stadt-muenster.de/buecherei/orte-und-oeffnungszeiten",
+      opening: book.opening
     };
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
