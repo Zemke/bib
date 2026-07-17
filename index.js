@@ -1,13 +1,15 @@
 const http = require('http');
+const path = require('path');
 const fs = require('fs');
 const ejs = require('ejs');
 const request = require('./request');
 const book = require('./book_ol');
 const url = require('url');
 
-if (!fs.existsSync('x.json')) {
+const xfile = path.join(__dirname, "x.json");
+if (!fs.existsSync(xfile)) {
   fs.writeFileSync(
-    'x.json',
+    xfile,
     JSON.stringify({
       books: [],
       bookworms: {
@@ -16,7 +18,7 @@ if (!fs.existsSync('x.json')) {
       }
     }));
 }
-const X = JSON.parse(fs.readFileSync('x.json', 'utf8'));
+const X = JSON.parse(fs.readFileSync(xfile, 'utf8'));
 
 function requestBook(id) {
   if (process.env.MOCK !== "0") {
@@ -119,7 +121,7 @@ http.createServer(async (req, res) => {
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
     res.end();
-    fs.writeFileSync('x.json', JSON.stringify(X));
+    fs.writeFileSync(xfile, JSON.stringify(X));
     return;
   }
   res.writeHead(404);

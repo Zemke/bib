@@ -1,12 +1,14 @@
 const fs = require('fs');
+const path = require('path');
 const url = require('url');
 const request = require('./request');
 const book = require('./book_ol');
 
 const bookworm = "FLORI";
-if (!fs.existsSync('x.json')) {
+const xfile = path.join(__dirname, "x.json");
+if (!fs.existsSync(xfile)) {
   fs.writeFileSync(
-    'x.json',
+    xfile,
     JSON.stringify({
       books: [],
       bookworms: {
@@ -16,7 +18,7 @@ if (!fs.existsSync('x.json')) {
     }));
 }
 
-const X = JSON.parse(fs.readFileSync('x.json', 'utf8'));
+const X = JSON.parse(fs.readFileSync(xfile, 'utf8'));
 
 function requestBook(id) {
   if (process.env.MOCK !== "0") {
@@ -83,7 +85,7 @@ async function refreshBook(id) {
     X.bookworms[bookworm].refresh = now.getTime();
     await Promise.all(books.map(b => refreshBook(b.id)));
   }
-  fs.writeFileSync('x.json', JSON.stringify(X));
+  fs.writeFileSync(xfile, JSON.stringify(X));
   //console.log(JSON.stringify(books, 2, 2));
   const status = {
     "Verfügbar": "🟢",
