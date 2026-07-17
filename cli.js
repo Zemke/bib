@@ -27,7 +27,7 @@ function requestBook(id) {
     });
   }
   return request.get(
-    process.env.BIBLINK + "/webopac/detail.aspx/?data=" + id,
+    process.env.BIBLINK + "/webopac/detail.aspx?Id=" + id,
     {"content-type": "text/html,application/xhtml+xml,application/xml"},
   );
 }
@@ -40,7 +40,7 @@ async function saveBook(id, bookworm) {
     }
     return;
   }
-  const b = book.parse(await requestBook(id));
+  const b = book.parse(await requestBook(id), id);
   b.bookworms = [bookworm];
   X.books.push(b);
   return Promise.resolve(b);
@@ -50,7 +50,7 @@ async function refreshBook(id) {
   try {
     return book.update(
       X.books.find(b => b.id === id),
-      book.parse(await requestBook(id))
+      book.parse(await requestBook(id), id)
     );
   } catch (err) {
     console.error("couldn't refresh book", id, err);
@@ -60,7 +60,7 @@ async function refreshBook(id) {
 (async () => {
   if (process.argv.length === 4 && process.argv[2] === 'add') {
     const idOrLink = process.argv[3];
-    const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.data : idOrLink;
+    const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.Id : idOrLink;
     try {
       await saveBook(id, bookworm);
     } catch (err) {

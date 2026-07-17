@@ -4,7 +4,7 @@ const url = require('url')
 
 // WinBIAP WebOPAC
 
-function parse(D) {
+function parse(D, id) {
   const J = new jsdom.JSDOM(D).window.document;
   const cc = Array.from(J.querySelectorAll("td.cellMediaItemStatus"))
     .map(el => el.textContent.trim())
@@ -29,7 +29,7 @@ function parse(D) {
     buechereien: Object.keys(avails).sort((a, b) => a === "Zentralbibliothek im PFL" ? -1 : a.localeCompare(b)),
     updated: now,
     added: now,
-    id: url.parse(J.head.querySelector("link[rel=canonical]").href, true).query.data,
+    id,
     isbn: detail["ISBN13"],
     name: detail["Titel"],
     author: detail["Verfasserangabe"],
