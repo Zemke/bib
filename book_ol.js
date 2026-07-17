@@ -2,6 +2,8 @@ const fs = require('fs');
 const jsdom = require("jsdom");
 const url = require('url')
 
+// WinBIAP WebOPAC
+
 function parse(D) {
   const J = new jsdom.JSDOM(D).window.document;
   const cc = Array.from(J.querySelectorAll("td.cellMediaItemStatus"))
