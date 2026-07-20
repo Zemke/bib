@@ -1,5 +1,6 @@
 const fs = require('fs');
 const jsdom = require("jsdom");
+const url = require('url');
 
 // OCLC BIBLIOTHECA
 
@@ -51,8 +52,13 @@ function update(ref, b) {
   }
 }
 
+function idOrLink(s) {
+  return s.includes("/") ? url.parse(s, true).query.Id : s;
+}
+
 module.exports.parse = parse;
 module.exports.update = update;
 module.exports.opening = "https://www.stadtbibliothek.oldenburg.de/bibliotheken/";
 module.exports.detail = "/?id="
+module.exports.idOrLink = idOrLink;
 

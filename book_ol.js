@@ -73,8 +73,22 @@ function update(ref, b) {
   }
 }
 
+function idOrLink(s) {
+  if (!s.includes("/")) {
+    return s;
+  }
+  const u = url.parse(s, true);
+  return s.includes("data")
+    ? atob(u.query.data)
+        .split("&amp;")
+        .find(x => x.startsWith("CatalogueId="))
+        .split("=")[1]
+    : u.query.Id;
+}
+
 module.exports.parse = parse;
 module.exports.update = update;
 module.exports.opening = "https://www.stadtbibliothek.oldenburg.de/bibliotheken/";
 module.exports.detail = "/webopac/detail.aspx?Id="
+module.exports.idOrLink = idOrLink;
 

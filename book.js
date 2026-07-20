@@ -75,10 +75,6 @@ async function add(id, bookworm) {
   }
 }
 
-function idOrLink(s) {
-  return s.includes("/") ? url.parse(s, true).query.Id : s;
-}
-
 async function index(bookworm) {
   const books = X.books
     .filter(b => b.bookworms.includes(bookworm))
@@ -103,10 +99,10 @@ module.exports.refreshBook = refreshBook;
 module.exports.saveBook = saveBook;
 module.exports.rm = rm;
 module.exports.add = add;
-module.exports.idOrLink = idOrLink;
 module.exports.index = index;
 
 module.exports.parse = book.parse;
 module.exports.update = book.update;
 module.exports.opening = book.opening;
+module.exports.idOrLink = book.idOrLink;
 
