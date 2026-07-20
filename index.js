@@ -3,65 +3,10 @@ const path = require('path');
 const fs = require('fs');
 const ejs = require('ejs');
 const request = require('./request');
-const book = require('./book_ol');
 const url = require('url');
+const book = require('./book');
 
-const xfile = path.join(__dirname, "x.json");
-const worms = process.env.WORMS == null
-  ? ["asdf"]
-  : process.env.WORMS.split(",")
-if (!fs.existsSync(xfile)) {
-  fs.writeFileSync(
-    xfile,
-    JSON.stringify({
-      books: [],
-      bookworms: worms.reduce((acc, v) => {
-        acc[v] = {refresh: -1};
-        return acc;
-      }, {})
-    }));
-}
-const X = JSON.parse(fs.readFileSync(xfile, 'utf8'));
 const port = 8000;
-
-function requestBook(id) {
-  if (process.env.MOCK !== "0") {
-    return new Promise((resolve, _) => {
-      setTimeout(() => resolve(fs.readFileSync('./detail.html', 'utf8')), 2000);
-    });
-  }
-  return request.get(
-    process.env.BIBLINK + "/webopac/detail.aspx?Id=" + id,
-    {"content-type": "text/html,application/xhtml+xml,application/xml"},
-  );
-}
-
-async function saveBook(id, bookworm) {
-  const existing = X.books.find(b => b.id === id);
-  if (existing != null) {
-    if (!existing.bookworms.includes(bookworm)) {
-      existing.bookworms.push(bookworm);
-    }
-    return;
-  }
-  const b = book.parse(await requestBook(id), id);
-  b.bookworms = [bookworm];
-  X.books.push(b);
-  return Promise.resolve(b);
-}
-
-async function refreshBook(id) {
-  console.info('refreshing', id);
-  try {
-    return book.update(
-      X.books.find(b => b.id === id),
-      book.parse(await requestBook(id), id)
-    );
-  } catch (err) {
-    console.error("couldn't refresh book", id, err);
-  }
-}
-
 http.createServer(async (req, res) => {
   if (req.url === "/favicon.ico") {
     // favicon 404
@@ -70,17 +15,17 @@ http.createServer(async (req, res) => {
     return;
   }
   const worm_param = req.url.split("/").slice(-1)[0];
-  const bookworm = worms
-    .filter(w => w.toLowerCase() === worm_param.slice(0, w.length+1).toLowerCase())[0] || worms[0];
+  const bookworm = book.worms
+    .filter(w => w.toLowerCase() === worm_param.slice(0, w.length+1).toLowerCase())[0] || book.worms[0];
   if (req.url.split("/")[1] === "api") {
     // API
-    if (worms.includes(req.url.split("/")[2])) {
+    if (book.worms.includes(req.url.split("/")[2])) {
       res.writeHead(200, {"Content-Type": "application/json"});
-      res.write(JSON.stringify(X.books.filter(b => b.bookworms.includes(bookworm))));
+      res.write(JSON.stringify(book.X.books.filter(b => b.bookworms.includes(bookworm))));
       res.end();
     } else {
       res.writeHead(200, {"Content-Type": "application/json"});
-      res.write(JSON.stringify(X));
+      res.write(JSON.stringify(book.X));
       res.end();
     }
     return;
@@ -91,44 +36,44 @@ http.createServer(async (req, res) => {
       const idOrLink = body["idOrLink"];
       const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.data : idOrLink;
       try {
-        await saveBook(id, bookworm);
+        await book.saveBook(id, bookworm);
       } catch (err) {
         console.error("couldn't load book", id, err);
       }
     } else if ("delete" in body) {
-      const idx = X.books.findIndex(b => b.id == body["id"]);
-      X.books[idx].bookworms = X.books[idx].bookworms.filter(bw => bw !== bookworm);
-      if (!X.books[idx].bookworms.length) {
-        X.books.splice(idx, 1);
+      const idx = book.X.books.findIndex(b => b.id == body["id"]);
+      book.X.books[idx].bookworms = book.X.books[idx].bookworms.filter(bw => bw !== bookworm);
+      if (!book.X.books[idx].bookworms.length) {
+        book.X.books.splice(idx, 1);
       }
     }
   }
-  if (req.url === "/" || worms.map(w => "/" + w).includes(req.url)) {
+  if (req.url === "/" || book.worms.map(w => "/" + w).includes(req.url)) {
     // index
-    const books = X.books
+    const books = book.X.books
       .filter(b => b.bookworms.includes(bookworm))
       .sort((a, b) => b.added - a.added);
     const now = new Date();
     const openingHours = now.getHours() >= 6 && now.getHours() < 22;
     const shouldRefresh =
-      (openingHours && now.getTime() - X.bookworms[bookworm].refresh >= 1000 * 60 * 15)
-      || (!openingHours && now.getTime() - X.bookworms[bookworm].refresh >= 1000 * 60 * 60);
+      (openingHours && now.getTime() - book.X.bookworms[bookworm].refresh >= 1000 * 60 * 15)
+      || (!openingHours && now.getTime() - book.X.bookworms[bookworm].refresh >= 1000 * 60 * 60);
     if (shouldRefresh) {
-      X.bookworms[bookworm].refresh = now.getTime();
-      await Promise.all(books.map(b => refreshBook(b.id)));
+      book.X.bookworms[bookworm].refresh = now.getTime();
+      await Promise.all(books.map(b => book.refreshBook(b.id)));
     }
     const vars = {
       books,
       biblink: process.env.BIBLINK,
       bookworm,
-      worms,
+      worms: book.worms,
       collapse: books.length > 4,
       opening: book.opening
     };
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
     res.end();
-    fs.writeFileSync(xfile, JSON.stringify(X));
+    fs.writeFileSync(book.xfile, JSON.stringify(book.X));
     return;
   }
   res.writeHead(404);

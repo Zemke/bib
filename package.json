@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "main": "index.js",
   "scripts": {
-    "dev": "BIBLINK=https://open.stadt-muenster.de MOCK=1 nodemon -e js,html index.js"
+    "dev": "BIBLINK=https://www.stadtbibliothek.oldenburg.de MOCK=1 nodemon -e js,html index.js",
+    "prod": "BIBLINK=https://www.stadtbibliothek.oldenburg.de MOCK=0 nodemon -e js,html index.js"
   },
   "dependencies": {
     "ejs": "^3.1.10",
