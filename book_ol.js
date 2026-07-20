@@ -47,7 +47,9 @@ function toAvails(elem) {
       const statusLoc = toStatus(status.toLowerCase());
       let frist = null
       if (statusLoc === "Entliehen") {
-        frist = status.match(/bis (\d\d.\d\d.\d{4})/).slice(-1)[0]
+        frist = status.includes("heute")
+          ? new Date().toLocaleDateString("DE", {year: "numeric", month: "2-digit", day: "2-digit"})
+          : status.match(/bis (\d\d.\d\d.\d{4})/).slice(-1)[0];
       }
       acc[buecherei].push({bereich: null, standort, status: statusLoc, frist, vorbestellungen: 0});
       return acc;
