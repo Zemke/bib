@@ -18,15 +18,13 @@ http.createServer(async (req, res) => {
     .filter(w => w.toLowerCase() === worm_param.slice(0, w.length+1).toLowerCase())[0] || book.worms[0];
   if (req.url.split("/")[1] === "api") {
     // API
+    res.writeHead(200, {"Content-Type": "application/json"});
     if (book.worms.includes(req.url.split("/")[2])) {
-      res.writeHead(200, {"Content-Type": "application/json"});
       res.write(JSON.stringify(book.X.books.filter(b => b.bookworms.includes(bookworm))));
-      res.end();
     } else {
-      res.writeHead(200, {"Content-Type": "application/json"});
       res.write(JSON.stringify(book.X));
-      res.end();
     }
+    res.end();
     return;
   } else if (req.method === "POST") {
     // add or delete book
