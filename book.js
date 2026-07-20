@@ -82,7 +82,8 @@ async function index(bookworm) {
   const now = new Date();
   const openingHours = now.getHours() >= 6 && now.getHours() < 22;
   const shouldRefresh =
-    (openingHours && now.getTime() - X.bookworms[bookworm].refresh >= 1000 * 60 * 15)
+    process.argv.includes("--force")
+    || (openingHours && now.getTime() - X.bookworms[bookworm].refresh >= 1000 * 60 * 15)
     || (!openingHours && now.getTime() - X.bookworms[bookworm].refresh >= 1000 * 60 * 60);
   if (shouldRefresh) {
     X.bookworms[bookworm].refresh = now.getTime();
