@@ -1,40 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
-const request = require('./request');
 const book = require('./book');
 
 const bookworm = process.env.WORMS.split(",")[0];
 
 (async () => {
   if (process.argv.length === 4 && process.argv[2] === 'add') {
-    const idOrLink = process.argv[3];
-    const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.Id : idOrLink;
-    try {
-      await book.saveBook(id, bookworm);
-    } catch (err) {
-      console.error("couldn't load book", id, err);
-    }
+    await book.add(book.idOrLink(process.argv[3]), bookworm);
   } else if (process.argv.length === 4 && process.argv[2] === 'rm') {
-    const idx = book.X.books.findIndex(b => b.id == process.argv[3]);
-    book.X.books[idx].bookworms = book.X.books[idx].bookworms.filter(bw => bw !== bookworm);
-    if (!book.X.books[idx].bookworms.length) {
-      book.X.books.splice(idx, 1);
-    }
+    book.rm(process.argv[3], bookworm);
   }
-  const books = book.X.books
-    .filter(b => b.bookworms.includes(bookworm))
-    .sort((a, b) => b.added - a.added);
-  const now = new Date();
-  const openingHours = now.getHours() >= 6 && now.getHours() < 22;
-  const shouldRefresh =
-    (openingHours && now.getTime() - book.X.bookworms[bookworm].refresh >= 1000 * 60 * 15)
-    || (!openingHours && now.getTime() - book.X.bookworms[bookworm].refresh >= 1000 * 60 * 60);
-  if (shouldRefresh) {
-    book.X.bookworms[bookworm].refresh = now.getTime();
-    await Promise.all(books.map(b => book.refreshBook(b.id)));
-  }
-  fs.writeFileSync(book.xfile, JSON.stringify(book.X));
+  const books = await book.index(bookworm);
   //console.log(JSON.stringify(books, 2, 2));
   const status = {
     "Verfügbar": "🟢",

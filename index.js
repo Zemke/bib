@@ -1,5 +1,4 @@
 const http = require('http');
-const path = require('path');
 const fs = require('fs');
 const ejs = require('ejs');
 const request = require('./request');
@@ -33,35 +32,14 @@ http.createServer(async (req, res) => {
     // add or delete book
     const body = request.formData(await request.read(req));
     if ("idOrLink" in body) {
-      const idOrLink = body["idOrLink"];
-      const id = idOrLink.includes("/") ? url.parse(idOrLink, true).query.data : idOrLink;
-      try {
-        await book.saveBook(id, bookworm);
-      } catch (err) {
-        console.error("couldn't load book", id, err);
-      }
+      await book.add(book.idOrLink(body["idOrLink"]), bookworm);
     } else if ("delete" in body) {
-      const idx = book.X.books.findIndex(b => b.id == body["id"]);
-      book.X.books[idx].bookworms = book.X.books[idx].bookworms.filter(bw => bw !== bookworm);
-      if (!book.X.books[idx].bookworms.length) {
-        book.X.books.splice(idx, 1);
-      }
+      book.rm(body["id"], bookworm);
     }
   }
   if (req.url === "/" || book.worms.map(w => "/" + w).includes(req.url)) {
     // index
-    const books = book.X.books
-      .filter(b => b.bookworms.includes(bookworm))
-      .sort((a, b) => b.added - a.added);
-    const now = new Date();
-    const openingHours = now.getHours() >= 6 && now.getHours() < 22;
-    const shouldRefresh =
-      (openingHours && now.getTime() - book.X.bookworms[bookworm].refresh >= 1000 * 60 * 15)
-      || (!openingHours && now.getTime() - book.X.bookworms[bookworm].refresh >= 1000 * 60 * 60);
-    if (shouldRefresh) {
-      book.X.bookworms[bookworm].refresh = now.getTime();
-      await Promise.all(books.map(b => book.refreshBook(b.id)));
-    }
+    const books = await book.index(bookworm);
     const vars = {
       books,
       biblink: process.env.BIBLINK,
@@ -73,7 +51,6 @@ http.createServer(async (req, res) => {
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write(ejs.render(fs.readFileSync('./index.html', 'utf8'), vars));
     res.end();
-    fs.writeFileSync(book.xfile, JSON.stringify(book.X));
     return;
   }
   res.writeHead(404);

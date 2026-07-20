@@ -54,4 +54,5 @@ function update(ref, b) {
 module.exports.parse = parse;
 module.exports.update = update;
 module.exports.opening = "https://www.stadtbibliothek.oldenburg.de/bibliotheken/";
+module.exports.detail = "/?id="
 
